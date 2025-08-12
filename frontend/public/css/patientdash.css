@@ -1,0 +1,20 @@
+body {
+    background-color: #f8f9fa;
+}
+
+h2 {
+    font-weight: 600;
+}
+
+.card-header {
+    font-weight: 600;
+}
+
+.card-body {
+    background-color: #fff;
+}
+
+.list-group-item-action {
+    font-size: 16px;
+    cursor: pointer;
+}

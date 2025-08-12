@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartHosp - Hospital Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link href="/css/login-style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="d-flex">
+      <!-- Sidebar -->
+      <nav class="sidebar bg-light">
+        <div class="sidebar-header p-3">
+          <h4 class="text-primary fw-bold">
+            <i class="bi bi-hospital text-primary"></i> <img src="/images/logo.jpg" width="100px" height="50px" alt="">
+          </h4>
+        </div>
+
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a
+              class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+              href="/patient/dashboard"
+            >
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="/patient/bookappointments"
+            >
+              <i class="bi bi-calendar-check"></i> Book Appointments
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="/patient/admission"
+            >
+              <i class="bi bi-person-plus"></i> Admissions
+            </a>
+          </li>
+          
+         
+         
+        </ul>
+
+        <div class="mt-auto p-3">
+          <div class="dropdown">
+            <a
+              class="btn btn-outline-secondary dropdown-toggle w-100"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-person-circle"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="bi bi-gear"></i> Settings</a
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="/api/auth/logout"
+                  ><i class="bi bi-box-arrow-right"></i> Logout</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content flex-grow-1">
+        <div
+          class="top-bar bg-white border-bottom p-3 d-flex justify-content-between align-items-center"
+        >
+          <div>
+            <h5 class="mb-0">Dashboard</h5>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light"><i class="bi bi-bell"></i></button>
+            <button class="btn btn-light"><i class="bi bi-gear"></i></button>
+            <div class="user-avatar">
+              <i class="bi bi-person-circle fs-4 text-muted"></i>
+            </div>
+          </div>
+        </div>
+
+       
+<link rel="stylesheet" href="/css/adm.css">
+ <div class="content-area ">
+  <!-- <div class="app-container">
+        Main Content 
+        <main class="main-content"> -->
+
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Patient Record & Admission</h1>
+                    <p>Complete your online registration and admission details.</p>
+                </div>
+                     <form action="/patient/admission" method="POST" class="admission-form" enctype="multipart/form-data">                    <!-- Personal Details Section -->
+                    <section class="form-section">
+                        <h2>Personal Details</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Enter patient's full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth">
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender">
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactNumber">Contact Number</label>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="e.g., +1234567890">
+                            </div>
+                            <div class="form-group">
+                                <label for="emailAddress">Email Address</label>
+                                <input type="email" id="emailAddress" name="emailAddress" placeholder="e.g., patient@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" placeholder="Enter full address">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Medical History Section -->
+                    <section class="form-section">
+                        <h2>Medical History</h2>
+                        
+                        <div class="form-group">
+                            <label for="currentMedications">Current Medications</label>
+                            <textarea id="currentMedications" name="currentMedications" placeholder="List all current medications, dosage, and frequency"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="knownAllergies">Known Allergies</label>
+                            <textarea id="knownAllergies" name="knownAllergies" placeholder="List all known allergies (e.g., medications, food, environment)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pastConditions">Past Medical Conditions</label>
+                            <textarea id="pastConditions" name="pastConditions" placeholder="Describe any significant past medical conditions or surgeries"></textarea>
+                        </div>
+                    </section>
+
+                    <!-- Document Upload Section -->
+                    <section class="form-section">
+                        <h2>Document Upload</h2>
+                        <p class="section-description">Please upload relevant documents (e.g., ID proof, referral letters, insurance cards).</p>
+                        
+                        <div class="file-upload-area">
+                            <input type="file" id="documents" name="documents" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                            <div class="file-upload-placeholder">
+                                <i class="fas fa-upload"></i>
+                                <button type="button" class="upload-btn" onclick="document.getElementById('documents').click();">
+                                    <i class="fas fa-upload"></i>
+                                    Upload Document
+                                </button>
+                                <p class="file-info">No files selected. Max file size: 5MB per document.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Appointment Details Section -->
+                    <section class="form-section">
+                        <h2>Appointment Details</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <select id="department" name="department">
+                                    <option value="">Select department</option>
+                                    <% 
+                        // Unique departments ka list banate hain
+                        const departments = [...new Set(doctor.map(doc => doc.department))];
+                        departments.forEach(dept => { 
+                    %>
+                        <option value="<%= dept %>"><%= dept %></option>
+                    <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="preferredDoctor">Preferred Doctor</label>
+                                <select id="preferredDoctor" name="preferredDoctor">
+                                   <option value="">Select doctor</option>
+                                
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preferredDate">Preferred Date</label>
+                                <input type="date" id="preferredDate" name="preferredDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="preferredTime">Preferred Time</label>
+                                <input type="time" id="preferredTime" name="preferredTime">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Emergency Status Section -->
+                    <section class="form-section">
+                        <h2>Emergency Status</h2>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="emergencyCase" name="emergencyCase">
+                            <label for="emergencyCase" class="checkbox-label">Mark as Emergency Case</label>
+                        </div>
+                    </section>
+
+                    <!-- Review & Submit Section -->
+                    <section class="form-section">
+                        <h2>Review & Submit</h2>
+                        <p class="section-description">Please review all details carefully before submitting your admission application.</p>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i>
+                                Submit Application
+                            </button>
+                        </div>
+                    </section>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    // Backend se doctors ka data JS me le aate hain
+    const doctors = <%- JSON.stringify(doctor) %>;
+
+    const departmentSelect = document.getElementById('department');
+    const doctorContainer = document.getElementById('preferredDoctor');
+
+    departmentSelect.addEventListener('change', function () {
+        const selectedDept = this.value;
+
+        // Pehle saare options clear kar dete hain
+        doctorContainer.innerHTML = '<option value="">Choose Doctor</option>';
+
+        if (selectedDept) {
+            // Filter doctors jo selected department me hain
+            const filteredDoctors = doctors.filter(doc => doc.department === selectedDept);
+
+            // Har doctor ko option me add karte hain
+            filteredDoctors.forEach(doc => {
+                const option = document.createElement('option');
+                option.value = doc.name;
+                option.textContent = doc.name;
+                doctorContainer.appendChild(option);
+            });
+        }
+    });
+</script>
+<%- include('../partials/footer.ejs') %>

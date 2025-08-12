@@ -1,0 +1,313 @@
+<%- include('./partials/sidebar.ejs') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Inventory - SmartHosp</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- FontAwesome (for older icons used in templates) -->
+  <script src="https://kit.fontawesome.com/a2d9b6f6c0.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Your custom CSS -->
+  <link rel="stylesheet" href="/css/inv.css">
+
+  <style>
+    /* small helpers so the page looks tidy even without your custom file */
+    .summary-card { border-radius:8px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+    .card-number { font-size:1.8rem; font-weight:700; margin:0; }
+    .status-badge { padding:6px 10px; border-radius:8px; font-weight:600; }
+    .status-in-stock { background:#e9f7ef; color:#138000; }
+    .status-low-stock { background:#fff4e6; color:#b36b00; }
+    .status-out-of-stock { background:#fdecea; color:#a80000; }
+    .table-controls { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+    .action-buttons form { display:inline-block; margin:0; }
+  </style>
+</head>
+<body>
+  <div class="content-area p-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="h4 mb-0">Inventory Management</h1>
+        <small class="text-muted">Overview and control of medical supplies</small>
+      </div>
+      <div>
+        <a href="/admin/dashboard" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> Back</a>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4" id="summaryCards">
+      <div class="col-md-3 mb-3">
+        <div class="summary-card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 id="totalItems" class="card-number"><%- totalItems %></h3>
+              <p class="mb-0 text-muted">Total Items</p>
+            </div>
+            <div><i class="bi bi-box-seam fs-2 text-primary"></i></div>
+          </div>
+          <small class="text-muted">All registered supplies</small>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="summary-card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 id="lowStock" class="card-number text-warning"><%- lowStockItems %></h3>
+              <p class="mb-0 text-muted">Low Stock Items</p>
+            </div>
+            <div><i class="bi bi-exclamation-triangle fs-2 text-warning"></i></div>
+          </div>
+          <small class="text-warning">Needs attention soon</small>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="summary-card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 id="outOfStock" class="card-number text-danger"><%- outOfStockItems  %></h3>
+              <p class="mb-0 text-muted">Out of Stock</p>
+            </div>
+            <div><i class="bi bi-x-circle fs-2 text-danger"></i></div>
+          </div>
+          <small class="text-danger">Critical, reorder immediately</small>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="summary-card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 id="recentAdditions" class="card-number text-teal"><%- recentAdditions  %></h3>
+              <p class="mb-0 text-muted">Recent Additions</p>
+            </div>
+            <div><i class="bi bi-plus-circle fs-2 text-success"></i></div>
+          </div>
+          <small class="text-muted">In the last 7 days</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Item Form -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form id="addItemForm" action="/admin/inventory" method="POST" class="row g-2 align-items-center">
+          <div class="col-md-3">
+            <input name="name" required placeholder="Item name" class="form-control" />
+          </div>
+          <div class="col-md-2">
+            <select name="category" class="form-select" required>
+              <option value="">Category</option>
+              <option>Medical Consumables</option>
+              <option>Medical Devices</option>
+              <option>Pharmaceuticals</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input name="stock_level" type="number" min="0" required placeholder="Stock level" class="form-control" />
+          </div>
+          <div class="col-md-2">
+            <input name="unit" required placeholder="Unit (pcs, bottles)" class="form-control" />
+          </div>
+          <div class="col-md-1">
+            <select name="status" class="form-select">
+              <option>In Stock</option>
+              <option>Low Stock</option>
+              <option>Out of Stock</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-grid">
+            <button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Add Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="table-controls mb-3">
+      <div class="search-box me-2" style="flex:1;">
+        <input id="searchInput" type="text" class="form-control" placeholder="Search items by name..." />
+      </div>
+
+      <div class="d-flex gap-2">
+        <select id="statusFilter" class="form-select">
+          <option value="">All Statuses</option>
+          <option value="In Stock">In Stock</option>
+          <option value="Low Stock">Low Stock</option>
+          <option value="Out of Stock">Out of Stock</option>
+        </select>
+
+        <select id="categoryFilter" class="form-select">
+          <option value="">All Categories</option>
+          <option>Medical Consumables</option>
+          <option>Medical Devices</option>
+          <option>Pharmaceuticals</option>
+        </select>
+
+        <button id="refreshBtn" class="btn btn-outline-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
+      </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle inventory-table">
+        <thead class="table-light">
+          <tr>
+            <th>Item ID</th>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Stock Level</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTableBody">
+          <% if (typeof inventory !== 'undefined' && inventory && inventory.length) { %>
+            <% inventory.forEach(item => { %>
+              <tr>
+                <td><%= item._id %></td>
+                <td><%= item.name %></td>
+                <td><%= item.category %></td>
+                <td><%= item.stock %></td>
+                <td><%= item.unit %></td>
+                <td>
+                  <span class="status-badge status-<%= item.status.toLowerCase().replace(' ', '-') %>">
+                    <%= item.status %>
+                  </span>
+                </td>
+                <td><%= item.last_updated ? new Date(item.last_updated).toLocaleDateString() : '' %></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary" onclick="openEditModal('<%= item._id %>')"><i class="fas fa-edit"></i></button>
+
+                    <form action="/admin/inventory/delete/<%= item._id %>" method="POST" style="display:inline-block" onsubmit="return confirm('Delete this item?');">
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <!-- initial empty; will be filled by JS -->
+            <tr><td colspan="8" class="text-center text-muted">Loading inventory...</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination placeholder (you can replace with server-side pagination) -->
+    <div class="pagination-container mt-3 d-flex justify-content-end">
+      <nav aria-label="Inventory pagination">
+        <ul class="pagination mb-0">
+          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form id="editForm" class="modal-content" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Inventory Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editItemId" name="id" />
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input id="editName" name="name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select id="editCategory" name="category" class="form-select" required>
+              <option>Medical Consumables</option>
+              <option>Medical Devices</option>
+              <option>Pharmaceuticals</option>
+            </select>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Stock Level</label>
+              <input id="editStock" name="stock_level" type="number" min="0" class="form-control" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Unit</label>
+              <input id="editUnit" name="unit" class="form-control" required />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select id="editStatus" name="status" class="form-select">
+              <option>In Stock</option>
+              <option>Low Stock</option>
+              <option>Out of Stock</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- action will be set dynamically to /admin/inventory/edit/:id -->
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  function openEditModal(itemId) {
+    // Find the row data based on itemId
+    const row = [...document.querySelectorAll('#inventoryTableBody tr')]
+      .find(r => r.querySelector('td')?.innerText.trim() === itemId);
+
+    if (!row) return;
+
+    // Extract values from the row
+    const name = row.cells[1].innerText.trim();
+    const category = row.cells[2].innerText.trim();
+    const stock = row.cells[3].innerText.trim();
+    const unit = row.cells[4].innerText.trim();
+    const status = row.cells[5].innerText.trim();
+
+    // Populate modal fields
+    document.getElementById('editItemId').value = itemId;
+    document.getElementById('editName').value = name;
+    document.getElementById('editCategory').value = category;
+    document.getElementById('editStock').value = stock;
+    document.getElementById('editUnit').value = unit;
+    document.getElementById('editStatus').value = status;
+
+    // Set form action
+    document.getElementById('editForm').action = `/admin/inventory/edit/${itemId}`;
+
+    // Show the modal
+    new bootstrap.Modal(document.getElementById('editModal')).show();
+  }
+</script>
+
+<%- include('./partials/footer.ejs') %>
+</body>
+</html>

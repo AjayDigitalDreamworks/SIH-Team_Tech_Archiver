@@ -1,0 +1,573 @@
+<%- include('./partials/sidebar.ejs') %>
+<link rel="stylesheet" href="/css/dash-style.css">
+ <div class="content-area p-4">
+
+            <div class="dashboard-content">
+                <!-- Top Statistics Cards -->
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total Beds</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                        </div>
+                        <div class="stat-number">350</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+5 Beds</span>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Occupied Beds</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                        </div>
+                        <div class="stat-number">285</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-1 today</span>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Available Beds</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-number">65</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+2 today</span>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Current OPD Queue</div>
+                            <div class="stat-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                        </div>
+                        <div class="stat-number">23</div>
+                        <div class="stat-change neutral">
+                            <i class="fas fa-clock"></i>
+                            <span>+3 in last hour</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Data Section -->
+                <div class="charts-section">
+                    <!-- Bed Occupancy Trends -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Bed Occupancy Trends</h3>
+                            <p>Daily patient occupancy vs. available beds.</p>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="bedOccupancyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- OPD Queue Breakdown -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>OPD Queue Breakdown</h3>
+                            <p>Patients by department.</p>
+                        </div>
+                        <div class="chart-content">
+                            <canvas id="opdBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tables Section -->
+                <div class="tables-section">
+                    <!-- Recent Discharges -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Recent Discharges</h3>
+                            <p>Latest patients discharged from the hospital.</p>
+                        </div>
+                        <div class="admin-table">
+                            <div class="table-header-row">
+                                <div class="table-cell">Patient ID</div>
+                                <div class="table-cell">Name</div>
+                                <div class="table-cell">Department</div>
+                                <div class="table-cell">Discharge Date</div>
+                            </div>
+                            <div class="table-body" id="dischargesTable">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Low Stock Alerts -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Inventory Low Stock Alerts</h3>
+                            <p>Items nearing reorder thresholds.</p>
+                        </div>
+                        <div class="admin-table">
+                            <div class="table-header-row">
+                                <div class="table-cell">Item</div>
+                                <div class="table-cell">Current Stock</div>
+                                <div class="table-cell">Threshold</div>
+                                <div class="table-cell">Status</div>
+                            </div>
+                            <div class="table-body" id="inventoryTable">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Availability Section -->
+                <div class="doctor-availability-section">
+                    <div class="section-header">
+                        <h3>Doctor Availability</h3>
+                    </div>
+                    <div class="doctors-grid" id="doctorsGrid">
+                        <!-- Doctor cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+  // Admin Dashboard Data and Functionality
+
+// Dashboard statistics data
+let dashboardStats = {
+    totalBeds: 350,
+    occupiedBeds: 285,
+    availableBeds: 65,
+    opdQueue: 23,
+    bedChange: '+5 Beds',
+    occupiedChange: '-1 today',
+    availableChange: '+2 today',
+    queueChange: '+3 in last hour'
+};
+
+// Recent discharges data
+let dischargesData = [
+    {
+        patientId: 'P00123',
+        name: 'Alice Smith',
+        department: 'Pediatrics',
+        dischargeDate: '2024-07-25'
+    },
+    {
+        patientId: 'P00122',
+        name: 'Robert Johnson',
+        department: 'Cardiology',
+        dischargeDate: '2024-07-25'
+    },
+    {
+        patientId: 'P00121',
+        name: 'Emily Davis',
+        department: 'General Medicine',
+        dischargeDate: '2024-07-24'
+    },
+    {
+        patientId: 'P00120',
+        name: 'Michael Brown',
+        department: 'Orthopedics',
+        dischargeDate: '2024-07-24'
+    },
+    {
+        patientId: 'P00119',
+        name: 'Jessica White',
+        department: 'Emergency',
+        dischargeDate: '2024-07-23'
+    }
+];
+
+// Inventory low stock data
+let inventoryData = [
+    {
+        item: 'Surgical Masks',
+        currentStock: 150,
+        threshold: 200,
+        status: 'low'
+    },
+    {
+        item: 'IV Bags (500ml)',
+        currentStock: 45,
+        threshold: 100,
+        status: 'critical'
+    },
+    {
+        item: 'Disposable Syringes',
+        currentStock: 75,
+        threshold: 150,
+        status: 'low'
+    },
+    {
+        item: 'Oxygen Tanks',
+        currentStock: 12,
+        threshold: 25,
+        status: 'critical'
+    },
+    {
+        item: 'Blood Pressure Cuffs',
+        currentStock: 18,
+        threshold: 30,
+        status: 'low'
+    }
+];
+
+// Doctor availability data
+let doctorsData = [
+    {
+        name: 'Dr. Arya Sharma',
+        specialty: 'General Medicine',
+        status: 'online'
+    },
+    {
+        name: 'Dr. Ben Carter',
+        specialty: 'Cardiology',
+        status: 'busy'
+    },
+    {
+        name: 'Dr. Chloe Lee',
+        specialty: 'Pediatrics',
+        status: 'online'
+    },
+    {
+        name: 'Dr. David Kim',
+        specialty: 'Orthopedics',
+        status: 'offline'
+    }
+];
+
+// Chart instances
+let bedOccupancyChart = null;
+let opdBreakdownChart = null;
+
+// Initialize the admin dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    renderDischargesTable();
+    renderInventoryTable();
+    renderDoctorsGrid();
+    initializeCharts();
+    updateStatistics();
+});
+
+// Render recent discharges table
+function renderDischargesTable() {
+    const tableBody = document.getElementById('dischargesTable');
+    tableBody.innerHTML = '';
+    
+    dischargesData.forEach(discharge => {
+        const row = document.createElement('div');
+        row.className = 'table-row';
+        
+        row.innerHTML = `
+            <div class="table-cell patient-id">${discharge.patientId}</div>
+            <div class="table-cell patient-name">${discharge.name}</div>
+            <div class="table-cell department">${discharge.department}</div>
+            <div class="table-cell date">${discharge.dischargeDate}</div>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Render inventory low stock table
+function renderInventoryTable() {
+    const tableBody = document.getElementById('inventoryTable');
+    tableBody.innerHTML = '';
+    
+    inventoryData.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'table-row';
+        
+        const statusClass = item.status === 'critical' ? 'status-critical' : 'status-low';
+        const statusText = item.status === 'critical' ? 'Critical' : 'Low';
+        
+        row.innerHTML = `
+            <div class="table-cell item-name">${item.item}</div>
+            <div class="table-cell stock-count">${item.currentStock}</div>
+            <div class="table-cell threshold">${item.threshold}</div>
+            <div class="table-cell">
+                <span class="${statusClass}">${statusText}</span>
+            </div>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Render doctors grid
+function renderDoctorsGrid() {
+    const doctorsGrid = document.getElementById('doctorsGrid');
+    doctorsGrid.innerHTML = '';
+    
+    doctorsData.forEach(doctor => {
+        const doctorCard = document.createElement('div');
+        doctorCard.className = 'doctor-card';
+        
+        doctorCard.innerHTML = `
+            <div class="doctor-info">
+                <div class="doctor-details">
+                    <h4>${doctor.name}</h4>
+                    <p>${doctor.specialty}</p>
+                </div>
+                <span class="doctor-status-badge ${doctor.status}">${doctor.status}</span>
+            </div>
+        `;
+        
+        doctorsGrid.appendChild(doctorCard);
+    });
+}
+
+// Initialize charts
+function initializeCharts() {
+    initializeBedOccupancyChart();
+    initializeOPDBreakdownChart();
+}
+
+// Initialize bed occupancy chart
+function initializeBedOccupancyChart() {
+    const ctx = document.getElementById('bedOccupancyChart').getContext('2d');
+    
+    const data = {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+            {
+                label: 'Occupied',
+                data: [280, 285, 290, 275, 285, 280, 270],
+                backgroundColor: '#10b981',
+                borderColor: '#10b981',
+                borderWidth: 1
+            },
+            {
+                label: 'Available',
+                data: [70, 65, 60, 75, 65, 70, 80],
+                backgroundColor: '#f59e0b',
+                borderColor: '#f59e0b',
+                borderWidth: 1
+            }
+        ]
+    };
+    
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            family: 'Inter'
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 350,
+                    ticks: {
+                        stepSize: 75,
+                        font: {
+                            size: 11,
+                            family: 'Inter'
+                        },
+                        color: '#64748b'
+                    },
+                    grid: {
+                        color: '#f1f5f9'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 11,
+                            family: 'Inter'
+                        },
+                        color: '#64748b'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    };
+    
+    bedOccupancyChart = new Chart(ctx, config);
+}
+
+// Initialize OPD breakdown chart
+function initializeOPDBreakdownChart() {
+    const ctx = document.getElementById('opdBreakdownChart').getContext('2d');
+    
+    const data = {
+        labels: ['General Medicine', 'Pediatrics', 'Orthopedics', 'Cardiology'],
+        datasets: [{
+            data: [35, 25, 20, 20],
+            backgroundColor: [
+                '#10b981',  // Green
+                '#3b82f6',  // Blue
+                '#f59e0b',  // Orange
+                '#64748b'   // Gray
+            ],
+            borderWidth: 0
+        }]
+    };
+    
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 11,
+                            family: 'Inter'
+                        },
+                        color: '#64748b'
+                    }
+                }
+            },
+            cutout: '60%'
+        }
+    };
+    
+    opdBreakdownChart = new Chart(ctx, config);
+}
+
+// Update statistics display
+function updateStatistics() {
+    // This function would typically fetch real-time data
+    // For demo purposes, we'll simulate some updates
+    
+    setTimeout(() => {
+        // Simulate real-time updates
+        dashboardStats.opdQueue += 1;
+        
+        // Update the OPD queue number in the stats card
+        const statNumbers = document.querySelectorAll('.admin-stat-card .stat-number');
+        if (statNumbers.length >= 4) {
+            statNumbers[3].textContent = dashboardStats.opdQueue;
+        }
+        
+        // Schedule next update
+        updateStatistics();
+    }, 30000); // Update every 30 seconds
+}
+
+// Utility functions for data management
+function addNewDischarge(patientData) {
+    dischargesData.unshift({
+        patientId: patientData.id,
+        name: patientData.name,
+        department: patientData.department,
+        dischargeDate: new Date().toISOString().split('T')[0]
+    });
+    
+    // Keep only latest 10 records
+    if (dischargesData.length > 10) {
+        dischargesData = dischargesData.slice(0, 10);
+    }
+    
+    renderDischargesTable();
+}
+
+function updateInventoryItem(itemName, newStock) {
+    const item = inventoryData.find(i => i.item === itemName);
+    if (item) {
+        item.currentStock = newStock;
+        
+        // Update status based on new stock level
+        if (newStock < item.threshold * 0.5) {
+            item.status = 'critical';
+        } else if (newStock < item.threshold) {
+            item.status = 'low';
+        } else {
+            // Remove from low stock alerts if stock is sufficient
+            const index = inventoryData.indexOf(item);
+            inventoryData.splice(index, 1);
+        }
+        
+        renderInventoryTable();
+    }
+}
+
+function updateDoctorStatus(doctorName, newStatus) {
+    const doctor = doctorsData.find(d => d.name === doctorName);
+    if (doctor) {
+        doctor.status = newStatus;
+        renderDoctorsGrid();
+    }
+}
+
+// Refresh all data
+function refreshDashboard() {
+    renderDischargesTable();
+    renderInventoryTable();
+    renderDoctorsGrid();
+    
+    // Update charts with new data if available
+    if (bedOccupancyChart && opdBreakdownChart) {
+        bedOccupancyChart.update();
+        opdBreakdownChart.update();
+    }
+    
+    showNotification('Dashboard refreshed successfully', 'success');
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1001;
+        font-weight: 500;
+        max-width: 300px;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Export functions for external use
+window.adminDashboard = {
+    addNewDischarge,
+    updateInventoryItem,
+    updateDoctorStatus,
+    refreshDashboard
+};
+</script>
+   <%- include('./partials/footer.ejs') %>

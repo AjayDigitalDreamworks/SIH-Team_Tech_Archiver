@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartHosp - Patient Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="/css/dash-patient.css" rel="stylesheet" />
+    <link href="/css/login-style.css" rel="stylesheet" />
+</head>
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar bg-light">
+        <div class="sidebar-header p-3">
+            <h4 class="text-primary fw-bold">
+                <i class="bi bi-hospital text-primary"></i>
+                <img src="/images/logo.jpg" width="100px" height="50px" alt="">
+            </h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="/patient/dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/patient/bookappointments">
+                    <i class="bi bi-calendar-check"></i> Book Appointment
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/patient/admission">
+                    <i class="bi bi-person-plus"></i> Admissions
+                </a>
+            </li>
+        </ul>
+        <div class="mt-auto p-3">
+            <div class="dropdown">
+                <a class="btn btn-outline-secondary dropdown-toggle w-100" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle"></i> <%= user.fullName %>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" href="/api/auth/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content flex-grow-1">
+        <div class="top-bar bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Dashboard</h5>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-light"><i class="bi bi-bell"></i></button>
+                <button class="btn btn-light"><i class="bi bi-gear"></i></button>
+            </div>
+        </div>
+
+        <div class="content-area p-4">
+            <div class="dashboard-grid">
+                
+                <!-- Upcoming Appointment -->
+                <div class="card p-3">
+                    <h3 class="card-title">Upcoming Appointment</h3>
+                    <% if (upcomingAppointment) { %>
+                        <div class="appointment-status"><%= upcomingAppointment.status %></div>
+                        <div class="appointment-date">
+                            <%= new Date(upcomingAppointment.date).toLocaleString() %>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Doctor:</span>
+                            <span class="value"><%= upcomingAppointment.doctor %></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Department:</span>
+                            <span class="value"><%= upcomingAppointment.department %></span>
+                        </div>
+                    <% } else { %>
+                        <p>No appointments scheduled.</p>
+                    <% } %>
+                </div>
+
+                <!-- My Admissions -->
+                <div class="card p-3">
+                    <h3 class="card-title">My Admissions</h3>
+                   <% if (admissions && admissions.length > 0) { %>
+                        <ul class="list-group">
+                            <% admissions.forEach(a => { %>
+                                <li class="list-group-item">
+                                    <strong><%= a.department %></strong> - 
+                                    <%= new Date(a.preferredDate).toLocaleDateString() %> at <%= a.preferredTime %>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p>No admissions found.</p>
+                    <% } %>
+                </div>
+
+                <!-- Notifications -->
+                <div class="card p-3">
+                    <h3 class="card-title">Notifications</h3>
+                    <% if (notifications.length > 0) { %>
+                        <ul class="list-group">
+                            <% notifications.forEach(n => { %>
+                                <li class="list-group-item">
+                                    <%= n.text %> <small class="text-muted">(<%= n.time %>)</small>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p>No notifications.</p>
+                    <% } %>
+                </div>
+
+                <!-- Queue Position -->
+                <div class="card p-3">
+                    <h3 class="card-title">Queue Position</h3>
+                    <p>Your current position in queue: <strong><%= queuePosition %></strong></p>
+                </div>
+
+                 <!-- Bed Assignment Card -->
+                <div class="card bed-card">
+                    <h3 class="card-title">Bed Assignment</h3>
+                    <div class="bed-info">
+                        <div class="bed-detail">
+                            <span class="bed-label">Ward:</span>
+                            <span class="bed-value">General Ward</span>
+                        </div>
+                        <div class="bed-detail">
+                            <span class="bed-label">Room:</span>
+                            <span class="bed-value">203</span>
+                        </div>
+                        <div class="bed-detail">
+                            <span class="bed-label">Bed No:</span>
+                            <span class="bed-value">B-7</span>
+                        </div>
+                        <div class="bed-detail">
+                            <span class="bed-label">Attending Physician:</span>
+                            <span class="bed-value">Dr. Priya Desai</span>
+                        </div>
+                    </div>
+                    <button class="btn-secondary">View Ward Map</button>
+                </div>
+
+                 <!-- Quick Actions Card -->
+                <div class="card actions-card">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <div class="action-buttons">
+                        <a href="/patient/bookappointments" class="btn-primary full-width">Book New Appointment</a>
+                        <a href="/patient/admission/list"><button class="btn-secondary full-width">View Medical Records</button></a>
+                        <button class="btn-secondary full-width">Contact Support</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHosp - Revolutionizing Hospital Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <!-- <i class="fas fa-heartbeat"></i>
+                <span>SmartHosp</span> -->
+                <img src="/images/logo.jpg" width="100px" height="50px" alt="logo medicure">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link active">Home</a></li>
+                <li><a href="javascript:[0]" class="nav-link">About</a></li>
+                <li><a href="javascript:[0]" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search for services or information...">
+                </div>
+                <a href="/api/auth/login"><button class="btn-login">Login</button></a>
+                <a href="/api/auth/login"><button class="btn-signup">Sign Up</button></a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1 class="hero-title">SmartHosp: Revolutionizing Hospital Management</h1>
+            <p class="hero-description">
+                A comprehensive web platform designed to streamline hospital operations, 
+                enhance patient care, and empower medical professionals with real-time data 
+                and efficient workflows.
+            </p>
+            <div class="hero-buttons">
+                <a href="/api/auth/login"><button class="btn-primary">Patient Login</button></a>
+                <a href="/api/auth/login"><button class="btn-secondary">Doctor/Admin Login</button></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>Efficient OPD Queue Management</h3>
+                    <p>Streamline patient flow with smart queue systems, reducing wait times and optimizing patient and doctor availability systems, reducing wait times and improving patient satisfaction.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <h3>Real-time Bed Availability</h3>
+                    <p>Instantly track bed occupancy across all departments, ICU, general wards, and private rooms, ensuring optimal resource allocation and quicker patient placement.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3>Comprehensive Patient Records</h3>
+                    <p>Secure patient information, upload medical history, lab results, and prescription security, facilitating seamless admissions and treatment planning.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Streamlined Appointment Booking</h3>
+                    <p>Allow patients to easily book, reschedule, or cancel appointments with their preferred doctors and departments, anytime, anywhere.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <h3>Swift Emergency Admissions</h3>
+                    <p>Prioritize urgent cases with dedicated emergency protocols, ensuring immediate attention and efficient bed assignment for critical patients.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h3>Smart Inventory Management</h3>
+                    <p>Automate tracking of medical supplies, medicine stocks, and gym full visibility over your supply chain to prevent shortages and optimize costs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Role-based Sections -->
+    <section class="roles">
+        <div class="container">
+            <h2 class="section-title">SmartHosp for Every Role</h2>
+            <div class="roles-grid">
+                <div class="role-card">
+                    <div class="role-avatar">
+                        <!-- <i class="fas fa-user"></i> -->
+                         <img src="/images/pat.png" alt="">
+                    </div>
+                    <h3>For Patients</h3>
+                    <p>Effortlessly manage your healthcare by booking appointments, check queue status, and manage your health records efficiently.</p>
+                    <a href="/api/auth/login"><button class="role-btn">Patient Login</button></a>
+                </div>
+                
+                <div class="role-card">
+                    <div class="role-avatar doctor">
+                        <!-- <i class="fas fa-user-md"></i> -->
+                          <img src="/images/doc.png" alt="">
+                    </div>
+                    <h3>For Doctors</h3>
+                    <p>Manage appointments, access patient records, and optimize your schedule with intuitive tools.</p>
+                    <a href="/api/auth/login"><button class="role-btn">Doctor Login</button></a>
+                </div>
+                
+                <div class="role-card">
+                    <div class="role-avatar admin">
+                        <!-- <i class="fas fa-user-tie"></i> -->
+                          <img src="/images/add.png" alt="">
+                    </div>
+                    <h3>For Administrators</h3>
+                    <p>Oversee hospital resources, monitor overall hospital operations from a centralized dashboard.</p>
+                    <a href="/api/auth/login"><button class="role-btn">Admin Login</button></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Experience Healthcare Management Reimagined</h2>
+            <p>SmartHosp is more than just software; it's a commitment to efficiency, clarity, and exceptional patient care. Join us in transforming hospital operations for a healthier tomorrow.</p>
+            <button class="btn-cta">Get Started Today</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Product</h4>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-logo">
+                <!-- <i class="fas fa-heartbeat"></i> -->
+                 <img src="/images/logo.jpg" width="100px" height="50px" alt="logo meidcure">
+                <!-- <span>SmartHosp</span> -->
+            </div>
+            <div class="footer-badge">
+                <span>Verified</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartHosp - Patient Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="/css/login-style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-light">
+            <div class="sidebar-header p-3">
+                <h4 class="text-primary fw-bold">
+                    <i class="bi bi-hospital text-primary"></i> <img src="/images/logo.jpg" width="100px" height="50px" alt="">
+                </h4>
+            </div>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="/patient/dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/patient/bookappointments">
+                        <i class="bi bi-calendar-check"></i> Book Appointment
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mt-auto p-3">
+                <div class="dropdown">
+                    <a class="btn btn-outline-secondary dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/api/auth/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content flex-grow-1">
+            <div class="top-bar bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Dashboard</h5>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light"><i class="bi bi-bell"></i></button>
+                    <button class="btn btn-light"><i class="bi bi-gear"></i></button>
+                    <div class="user-avatar">
+                        <i class="bi bi-person-circle fs-4 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area p-4">
+                <div class="container bg-light">
+                    <div class="row">
+                        <!-- Appointment Status Section -->
+                        <div class="col-lg-6 mt-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Appointment Status</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <% if (appointments && appointments.length > 0) { %>
+                                            <% appointments.forEach(appointment => { %>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    Appointment with <%= appointment.doctor %> (<%= appointment.department %>) - 
+                                                    <strong><%= appointment.status %></strong>
+                                                </a>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p>No appointments available.</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Download Section -->
+                        <div class="col-lg-6 mt-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Download Reports</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <% if (appointments && appointments.length > 0) { %>
+                                            <% appointments.forEach(appointment => { %>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    Appointment with <%= appointment.doctor %> (<%= appointment.department %>) - 
+                                                    <strong><i class="bi bi-file-earmark-pdf"></i> Download Report</strong>
+                                                </a>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p>No reports available.</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Doctors Section -->
+                    <div class="row mt-4">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Top Doctors</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group">
+                                        <% if (doctors && doctors.length > 0) { %>
+                                            <% doctors.forEach(doctor => { %>
+                                                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                                    <%= doctor.name %> (<%= doctor.department %>)
+                                                    <span class="badge <%= doctor.status === 'Available' ? 'bg-success' : 'bg-warning' %>">
+                                                        <%= doctor.status %>
+                                                    </span>
+                                                </a>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <p>No doctors available.</p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
