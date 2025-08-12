@@ -42,20 +42,6 @@ app.get("/", (req, res) => {
   res.render("index", { title: "Welcome to the Admin Panel" });
 });
 
-app.get("/admin/dashboard", (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect("/api/auth/login");
-    }
-
-    if (req.user.role === "admin" || req.user.role === "doctor") {
-        res.set('Cache-Control', 'no-store');
-        res.render("dashboard", { title: "Admin Dashboard", user: req.user });
-    } else {
-        res.redirect("/api/auth/login");
-    }
-});
-
-
 
 const adminRouter = require('./routes/admin');
 const patientRouter = require('./routes/patient');
