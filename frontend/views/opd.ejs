@@ -1,561 +1,157 @@
 <%- include('./partials/sidebar.ejs') %>
-<link rel="stylesheet" href="/css/opd.css">
- <div class="content-area p-4">
-            <!-- Header -->
-           
+    <link rel="stylesheet" href="/css/opd.css">
+    <div class="content-area p-4">
+        <!-- Header -->
 
-            <div class="dashboard-content">
-                <!-- Queue Overview Section -->
-                <div class="queue-overview">
-                    <h2>Queue Overview</h2>
-                    
-                    <!-- Statistics Cards -->
-                    <div class="queue-stats-grid">
-                        <div class="queue-stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>Total Patients</h3>
-                                <div class="stat-number">245</div>
-                                <div class="stat-subtitle">Today's patients</div>
-                            </div>
-                            <button class="view-details-btn">View Details</button>
+
+        <div class="dashboard-content">
+            <!-- Queue Overview Section -->
+            <div class="queue-overview">
+                <h2>Queue Overview</h2>
+
+                <!-- Statistics Cards -->
+                <div class="queue-stats-grid">
+                    <div class="queue-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
                         </div>
-                        
-                        <div class="queue-stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
+                        <div class="stat-info">
+                            <h3>Total Patients</h3>
+                            <div class="stat-number">
+                                <%= totalPatients %>
                             </div>
-                            <div class="stat-info">
-                                <h3>Avg. Wait Time</h3>
-                                <div class="stat-number">25 min</div>
-                                <div class="stat-subtitle">Across all departments</div>
-                            </div>
-                            <button class="view-details-btn">View Details</button>
+                            <div class="stat-subtitle">Today's patients</div>
                         </div>
-                        
-                        <div class="queue-stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-list"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3>Patients in Queue</h3>
-                                <div class="stat-number">18</div>
-                                <div class="stat-subtitle">Currently waiting</div>
-                            </div>
-                            <button class="view-details-btn">View Details</button>
+                        <!-- <button class="view-details-btn">View Details</button> -->
+                    </div>
+
+                    <div class="queue-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
                         </div>
-                        
-                        <div class="queue-stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <h3>Avg. Wait Time</h3>
+                            <div class="stat-number">
+                                <%= avgWaitTime %> min
                             </div>
-                            <div class="stat-info">
-                                <h3>Consultations Done</h3>
-                                <div class="stat-number">227</div>
-                                <div class="stat-subtitle">Today's completed visits</div>
+                            <div class="stat-subtitle">Across all departments</div>
+                        </div>
+                        <!-- <button class="view-details-btn">View Details</button> -->
+                    </div>
+
+                    <div class="queue-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Patients in Queue</h3>
+                            <div class="stat-number">
+                                <%= waiting %>
                             </div>
-                            <button class="view-details-btn">View Details</button>
+                            <div class="stat-subtitle">Currently waiting</div>
+                        </div>
+                        <!-- <button class="view-details-btn">View Details</button> -->
+                    </div>
+
+                    <div class="queue-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Consultations Done</h3>
+                            <div class="stat-number">
+                                <%= completed %>
+                            </div>
+                            <div class="stat-subtitle">Today's completed visits</div>
+                        </div>
+                        <!-- <button class="view-details-btn">View Details</button> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Queue Section -->
+            <div class="queue-management-section">
+                <!-- Current Patient Queue -->
+                <div class="queue-container">
+                    <div class="section-header">
+                        <h3>Current Patient Queue</h3>
+                    </div>
+
+                    <div class="queue-table">
+                        <div class="queue-table-header">
+                            <div class="header-cell">TOKEN</div>
+                            <div class="header-cell">PATIENT NAME</div>
+                            <div class="header-cell">WAIT TIME</div>
+                            <div class="header-cell">STATUS</div>
+                        </div>
+
+                        <div class="queue-table-body" id="queueTableBody">
+                            <% if (queue.length> 0) { %>
+                                <% queue.forEach(patient=> { %>
+                                    <div class="queue-row" data-token="<%= patient.tokenNumber %>"
+                                        style="cursor: pointer;">
+                                        <div class="token-cell">
+                                            <%= patient.tokenNumber %>
+                                        </div>
+                                        <div class="patient-name-cell">
+                                            <%= patient.patient.name %>
+                                        </div>
+                                        <div class="wait-time-cell">
+                                            <%= patient.waitTime %> mins
+                                        </div>
+                                        <div class="status-cell">
+                                            <span class="status-badge status-<%= patient.status %>">
+                                                <%= patient.status.charAt(0).toUpperCase() + patient.status.slice(1) %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <span>No records found</span>
+                                            <% } %>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Queue Section -->
-                <div class="queue-management-section">
-                    <!-- Current Patient Queue -->
-                    <div class="queue-container">
-                        <div class="section-header">
-                            <h3>Current Patient Queue</h3>
-                        </div>
-                        
-                        <div class="queue-table">
-                            <div class="queue-table-header">
-                                <div class="header-cell">TOKEN</div>
-                                <div class="header-cell">PATIENT NAME</div>
-                                <div class="header-cell">WAIT TIME</div>
-                                <div class="header-cell">STATUS</div>
-                            </div>
-                            
-                            <div class="queue-table-body" id="queueTableBody">
-                                <!-- Queue rows will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
+                <!-- Sidebar Section -->
+                <div class="queue-sidebar">
+                    <!-- Doctor Availability -->
+                    <div class="doctor-availability">
+                        <h3>Doctor Availability</h3>
+                        <div class="doctor-list" id="doctorList">
+                            <% doctorsData.forEach(doc=> { %>
+                                <div id="doctorList">
+                                    <div class="doctor-item">
+                                        <div class="doctor-info">
+                                            <h4>Dr. <%= doc.name %>
+                                            </h4>
+                                            <p>
+                                                <%= doc.qualifications %> — <%= doc.department %>
+                                            </p>
+                                        </div>
+                                        <div class="doctor-status">
+                                            <!-- <span class="status-indicator status-available">Available</span> -->
+                                            <% if (doc.status.toLowerCase()==="available" ) {%>
+                                                <span class="status-indicator status-available ">Available</span>
 
-                    <!-- Sidebar Section -->
-                    <div class="queue-sidebar">
-                        <!-- Doctor Availability -->
-                        <div class="doctor-availability">
-                            <h3>Doctor Availability</h3>
-                            <div class="doctor-list" id="doctorList">
-                                <!-- Doctor items will be populated by JavaScript -->
-                            </div>
-                        </div>
+                                                <% }else if(doc.status.toLowerCase()==="busy" ) { %>
+                                                    <span class="status-indicator status-busy ">Busy</span>
+                                                    <% }else if(doc.status.toLowerCase()==="on break" ) { %>
 
-                        <!-- Notification Settings -->
-                        <div class="notification-settings">
-                            <h3>Notification Settings</h3>
-                            <div class="setting-item">
-                                <span>SMS Notifications</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <button class="update-settings-btn">Update Settings</button>
-                        </div>
+                                                        <span class="status-indicator bg-info text-danger">On
+                                                            Break</span>
+                                                        <% } %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
 
-                        <!-- Admin Controls -->
-                        <div class="admin-controls">
-                            <h3>Admin Controls</h3>
-                            <button class="call-next-btn">
-                                <i class="fas fa-phone"></i>
-                                Call Next Patient
-                            </button>
-                            <button class="reset-queue-btn">
-                                <i class="fas fa-redo"></i>
-                                Reset Queue
-                            </button>
+                                </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+    </div>
 
-        <script>
-         // OPD Queue Management Data and Functionality
-
-// Queue data structure
-let queueData = [
-    {
-        token: 'OPD001',
-        patientName: 'Alice Johnson',
-        waitTime: '10 min',
-        status: 'waiting',
-        department: 'General Medicine',
-        arrivalTime: '09:30 AM'
-    },
-    {
-        token: 'OPD002',
-        patientName: 'Bob Smith',
-        waitTime: '5 min',
-        status: 'waiting',
-        department: 'Cardiology',
-        arrivalTime: '09:45 AM'
-    },
-    {
-        token: 'OPD003',
-        patientName: 'Charlie Brown',
-        waitTime: 'Consulting',
-        status: 'consulting',
-        department: 'Dermatology',
-        arrivalTime: '09:15 AM'
-    },
-    {
-        token: 'OPD004',
-        patientName: 'Diana Prince',
-        waitTime: '15 min',
-        status: 'waiting',
-        department: 'Orthopedics',
-        arrivalTime: '09:20 AM'
-    },
-    {
-        token: 'OPD005',
-        patientName: 'Ethan Hunt',
-        waitTime: '20 min',
-        status: 'waiting',
-        department: 'General Medicine',
-        arrivalTime: '09:10 AM'
-    },
-    {
-        token: 'OPD006',
-        patientName: 'Fiona Glenn',
-        waitTime: '12 min',
-        status: 'waiting',
-        department: 'Pediatrics',
-        arrivalTime: '09:25 AM'
-    }
-];
-
-// Doctor data
-let doctorsData = [
-    {
-        name: 'Dr. Emily White',
-        specialty: 'General Physician',
-        status: 'available'
-    },
-    {
-        name: 'Dr. Alex Green',
-        specialty: 'Pediatrician',
-        status: 'busy'
-    },
-    {
-        name: 'Dr. Sarah Kim',
-        specialty: 'Dermatologist',
-        status: 'available'
-    },
-    {
-        name: 'Dr. David Lee',
-        specialty: 'Orthopedic',
-        status: 'busy'
-    }
-];
-
-// Statistics data
-let statsData = {
-    totalPatients: 245,
-    avgWaitTime: '25 min',
-    patientsInQueue: 18,
-    consultationsDone: 227
-};
-
-// Current selected patient for calling
-let selectedPatient = null;
-
-// Initialize the OPD Queue dashboard
-document.addEventListener('DOMContentLoaded', function() {
-    renderQueueTable();
-    renderDoctorList();
-    updateStatistics();
-    initializeEventListeners();
-    startQueueTimer();
-});
-
-// Render the patient queue table
-function renderQueueTable() {
-    const queueTableBody = document.getElementById('queueTableBody');
-    queueTableBody.innerHTML = '';
-    
-    queueData.forEach(patient => {
-        const queueRow = createQueueRow(patient);
-        queueTableBody.appendChild(queueRow);
-    });
-}
-
-// Create a queue row element
-function createQueueRow(patient) {
-    const row = document.createElement('div');
-    row.className = 'queue-row';
-    row.dataset.token = patient.token;
-    
-    const statusClass = `status-${patient.status}`;
-    const statusText = {
-        'waiting': 'Waiting',
-        'consulting': 'Consulting',
-        'called': 'Called'
-    };
-    
-    row.innerHTML = `
-        <div class="token-cell">${patient.token}</div>
-        <div class="patient-name-cell">${patient.patientName}</div>
-        <div class="wait-time-cell">${patient.waitTime}</div>
-        <div class="status-cell">
-            <span class="status-badge ${statusClass}">${statusText[patient.status]}</span>
-        </div>
-    `;
-    
-    // Add click handler for waiting patients
-    if (patient.status === 'waiting') {
-        row.addEventListener('click', function() {
-            openCallPatientModal(patient.token);
-        });
-        row.style.cursor = 'pointer';
-    }
-    
-    return row;
-}
-
-// Render doctor availability list
-function renderDoctorList() {
-    const doctorList = document.getElementById('doctorList');
-    doctorList.innerHTML = '';
-    
-    doctorsData.forEach(doctor => {
-        const doctorItem = document.createElement('div');
-        doctorItem.className = 'doctor-item';
-        
-        const statusClass = `status-${doctor.status}`;
-        const statusText = {
-            'available': 'Available',
-            'busy': 'Busy'
-        };
-        
-        doctorItem.innerHTML = `
-            <div class="doctor-info">
-                <h4>${doctor.name}</h4>
-                <p>${doctor.specialty}</p>
-            </div>
-            <div class="doctor-status">
-                <span class="status-indicator ${statusClass}">${statusText[doctor.status]}</span>
-            </div>
-        `;
-        
-        doctorList.appendChild(doctorItem);
-    });
-}
-
-// Update statistics display
-function updateStatistics() {
-    // Update queue statistics
-    const currentQueue = queueData.filter(p => p.status === 'waiting').length;
-    statsData.patientsInQueue = currentQueue;
-    
-    // Update DOM elements if they exist
-    const statCards = document.querySelectorAll('.queue-stat-card .stat-number');
-    if (statCards.length >= 4) {
-        statCards[0].textContent = statsData.totalPatients;
-        statCards[1].textContent = statsData.avgWaitTime;
-        statCards[2].textContent = statsData.patientsInQueue;
-        statCards[3].textContent = statsData.consultationsDone;
-    }
-}
-
-// Open call patient modal
-function openCallPatientModal(token) {
-    selectedPatient = queueData.find(patient => patient.token === token);
-    if (!selectedPatient || selectedPatient.status !== 'waiting') {
-        return;
-    }
-    
-    const nextPatientInfo = document.getElementById('nextPatientInfo');
-    nextPatientInfo.innerHTML = `
-        <h4>Next Patient: ${selectedPatient.patientName}</h4>
-        <p><strong>Token:</strong> ${selectedPatient.token}</p>
-        <p><strong>Department:</strong> ${selectedPatient.department}</p>
-        <p><strong>Arrival Time:</strong> ${selectedPatient.arrivalTime}</p>
-        <p><strong>Wait Time:</strong> ${selectedPatient.waitTime}</p>
-    `;
-    
-    document.getElementById('callPatientModal').style.display = 'block';
-}
-
-// Close call patient modal
-function closeCallModal() {
-    document.getElementById('callPatientModal').style.display = 'none';
-    selectedPatient = null;
-    document.getElementById('assignedDoctor').value = '';
-}
-
-// Confirm patient call
-function confirmCall() {
-    const assignedDoctor = document.getElementById('assignedDoctor').value;
-    
-    if (!assignedDoctor) {
-        alert('Please select a doctor to assign the patient to.');
-        return;
-    }
-    
-    // Update patient status
-    selectedPatient.status = 'consulting';
-    selectedPatient.waitTime = 'Consulting';
-    
-    // Update doctor status to busy
-    const doctor = doctorsData.find(d => d.name === assignedDoctor);
-    if (doctor) {
-        doctor.status = 'busy';
-    }
-    
-    // Update statistics
-    statsData.consultationsDone++;
-    
-    // Update UI
-    renderQueueTable();
-    renderDoctorList();
-    updateStatistics();
-    
-    // Close modal
-    closeCallModal();
-    
-    // Show notification
-    showNotification(`${selectedPatient.patientName} (${selectedPatient.token}) called for consultation with ${assignedDoctor}`, 'success');
-}
-
-// Call next patient automatically
-function callNextPatient() {
-    const nextWaitingPatient = queueData.find(patient => patient.status === 'waiting');
-    if (nextWaitingPatient) {
-        openCallPatientModal(nextWaitingPatient.token);
-    } else {
-        showNotification('No patients waiting in queue', 'info');
-    }
-}
-
-// Reset queue
-function resetQueue() {
-    if (confirm('Are you sure you want to reset the entire queue? This action cannot be undone.')) {
-        // Reset all patients to waiting status
-        queueData.forEach(patient => {
-            patient.status = 'waiting';
-            patient.waitTime = calculateWaitTime(patient.arrivalTime);
-        });
-        
-        // Reset all doctors to available
-        doctorsData.forEach(doctor => {
-            doctor.status = 'available';
-        });
-        
-        // Update UI
-        renderQueueTable();
-        renderDoctorList();
-        updateStatistics();
-        
-        showNotification('Queue has been reset successfully', 'success');
-    }
-}
-
-// Calculate wait time based on arrival time
-function calculateWaitTime(arrivalTime) {
-    const arrival = new Date(`2025-08-11 ${arrivalTime}`);
-    const now = new Date();
-    const diffMs = now - arrival;
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    
-    if (diffMins < 0) return '0 min';
-    return `${diffMins} min`;
-}
-
-// Start queue timer to update wait times
-function startQueueTimer() {
-    setInterval(() => {
-        let updated = false;
-        queueData.forEach(patient => {
-            if (patient.status === 'waiting') {
-                const newWaitTime = calculateWaitTime(patient.arrivalTime);
-                if (patient.waitTime !== newWaitTime) {
-                    patient.waitTime = newWaitTime;
-                    updated = true;
-                }
-            }
-        });
-        
-        if (updated) {
-            renderQueueTable();
-        }
-    }, 60000); // Update every minute
-}
-
-// Show notification
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 1001;
-        font-weight: 500;
-        max-width: 300px;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Initialize event listeners
-function initializeEventListeners() {
-    // Modal close handlers
-    const modal = document.getElementById('callPatientModal');
-    const closeBtn = modal.querySelector('.close');
-    
-    closeBtn.addEventListener('click', closeCallModal);
-    
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeCallModal();
-        }
-    });
-    
-    // Admin control handlers
-    const callNextBtn = document.querySelector('.call-next-btn');
-    const resetQueueBtn = document.querySelector('.reset-queue-btn');
-    const updateSettingsBtn = document.querySelector('.update-settings-btn');
-    
-    if (callNextBtn) {
-        callNextBtn.addEventListener('click', callNextPatient);
-    }
-    
-    if (resetQueueBtn) {
-        resetQueueBtn.addEventListener('click', resetQueue);
-    }
-    
-    if (updateSettingsBtn) {
-        updateSettingsBtn.addEventListener('click', function() {
-            showNotification('Settings updated successfully', 'success');
-        });
-    }
-    
-    // View details button handlers
-    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
-    viewDetailsButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            showNotification('Detailed view coming soon', 'info');
-        });
-    });
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', function(event) {
-    // Escape key to close modal
-    if (event.key === 'Escape' && document.getElementById('callPatientModal').style.display === 'block') {
-        closeCallModal();
-    }
-    
-    // Ctrl+N to call next patient
-    if (event.ctrlKey && event.key === 'n') {
-        event.preventDefault();
-        callNextPatient();
-    }
-});
-
-// Add new patient to queue (for demo purposes)
-function addPatientToQueue(patientData) {
-    queueData.push({
-        token: `OPD${String(queueData.length + 1).padStart(3, '0')}`,
-        patientName: patientData.name,
-        waitTime: '0 min',
-        status: 'waiting',
-        department: patientData.department,
-        arrivalTime: new Date().toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: true 
-        })
-    });
-    
-    renderQueueTable();
-    updateStatistics();
-}
-
-// Remove patient from queue (when consultation is complete)
-function removePatientFromQueue(token) {
-    const patientIndex = queueData.findIndex(patient => patient.token === token);
-    if (patientIndex !== -1) {
-        const patient = queueData[patientIndex];
-        queueData.splice(patientIndex, 1);
-        
-        // Free up the doctor
-        const consultingDoctor = doctorsData.find(d => d.status === 'busy');
-        if (consultingDoctor) {
-            consultingDoctor.status = 'available';
-        }
-        
-        renderQueueTable();
-        renderDoctorList();
-        updateStatistics();
-        
-        showNotification(`${patient.patientName} consultation completed`, 'success');
-    }
-}
-        </script>
     <%- include('./partials/footer.ejs') %>

@@ -1,606 +1,133 @@
 <%- include('./partials/sidebar.ejs') %>
-<link rel="stylesheet" href="/css/bed.css">
- <div class="content-area p-4">
+    <link rel="stylesheet" href="/css/bed.css">
+    <div class="content-area p-4">
 
 
-    <!-- <div class="main-content"> -->
-            <!-- Header -->
+        <!-- <div class="main-content"> -->
+        <!-- Header -->
 
-            <div class="dashboard-content">
-                <!-- Statistics Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card total-beds">
-                        <div class="stat-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Total Beds</h3>
-                            <div class="stat-number">18</div>
-                        </div>
-                    </div>
-                    <div class="stat-card occupied-beds">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-injured"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Occupied Beds</h3>
-                            <div class="stat-number">5</div>
-                        </div>
-                    </div>
-                    <div class="stat-card available-beds">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Available Beds</h3>
-                            <div class="stat-number">9</div>
-                        </div>
-                    </div>
-                    <div class="stat-card maintenance-beds">
-                        <div class="stat-icon">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Cleaning/Maintenance</h3>
-                            <div class="stat-number">4</div>
-                        </div>
-                    </div>
+        <div class="dashboard-content">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card total-beds">
+            <div class="stat-icon">
+                <i class="fas fa-bed"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Beds</h3>
+                <div class="stat-number"><%= totalBeds %></div>
+            </div>
+        </div>
+        <div class="stat-card occupied-beds">
+            <div class="stat-icon">
+                <i class="fas fa-user-injured"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Occupied Beds</h3>
+                <div class="stat-number"><%= occupiedBeds %></div>
+            </div>
+        </div>
+        <div class="stat-card available-beds">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Available Beds</h3>
+                <div class="stat-number"><%= availableBeds %></div>
+            </div>
+        </div>
+        <div class="stat-card maintenance-beds">
+            <div class="stat-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Cleaning/Maintenance</h3>
+                <div class="stat-number"><%= maintenanceBeds %></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bed Status Section -->
+    <div class="bed-management-section">
+        <div class="bed-status-container">
+            <div class="section-header">
+                <h2>Real-Time Bed Status</h2>
+                <p>Monitor and manage bed availability across departments</p>
+                <div class="filters">
+                    <select id="roomFilter">
+                        <option value="">Search by Room or Patient Name...</option>
+                        <% 
+                        // dynamically add unique rooms from beds
+                        let rooms = [...new Set(beds.map(bed => bed.room).filter(r => r))];
+                        rooms.forEach(room => { %>
+                            <option value="<%= room %>"><%= room %></option>
+                        <% }) %>
+                    </select>
+                    <select id="bedTypeFilter">
+                        <option value="">All Bed Types</option>
+                        <option value="ICU">ICU</option>
+                        <option value="General">General</option>
+                        <option value="Private">Private</option>
+                        <option value="Emergency">Emergency</option>
+                    </select>
+                    <select id="departmentFilter">
+                        <option value="">All Departments</option>
+                        <option value="Critical Care">Critical Care</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Neurology">Neurology</option>
+                    </select>
                 </div>
+                <button class="reset-filters">Reset Filters</button>
+            </div>
 
-                <!-- Bed Status Section -->
-                <div class="bed-management-section">
-                    <div class="bed-status-container">
-                        <div class="section-header">
-                            <h2>Real-Time Bed Status</h2>
-                            <p>Monitor and manage bed availability across departments</p>
-                            <div class="filters">
-                                <select id="roomFilter">
-                                    <option value="">Search by Room or Patient Name...</option>
-                                </select>
-                                <select id="bedTypeFilter">
-                                    <option value="">All Bed Types</option>
-                                    <option value="ICU">ICU</option>
-                                    <option value="General">General</option>
-                                    <option value="Private">Private</option>
-                                    <option value="Emergency">Emergency</option>
-                                </select>
-                                <select id="departmentFilter">
-                                    <option value="">All Departments</option>
-                                    <option value="Critical Care">Critical Care</option>
-                                    <option value="Cardiology">Cardiology</option>
-                                    <option value="Orthopedics">Orthopedics</option>
-                                    <option value="Emergency">Emergency</option>
-                                    <option value="Neurology">Neurology</option>
-                                </select>
-                            </div>
-                            <button class="reset-filters">Reset Filters</button>
+            <!-- Bed Grid -->
+            <div class="bed-grid" id="bedGrid">
+                <% beds.forEach(bed => { %>
+                    <div class="bed-card" data-bed-id="<%= bed.bedId %>">
+                        <div class="bed-header">
+                            <div class="bed-number"><%= bed.bedId %></div>
+                            <span class="bed-status status-<%= bed.status %>">
+                                <%= bed.status.charAt(0).toUpperCase() + bed.status.slice(1) %>
+                            </span>
                         </div>
 
-                        <!-- Bed Grid -->
-                        <div class="bed-grid" id="bedGrid">
-                            <!-- Bed cards will be populated by JavaScript -->
+                        <div class="bed-type"><%= bed.condition || "General" %></div>
+
+                        <div class="patient-info">
+                            <% if (bed.status === "occupied" && bed.patient && bed.patient.name) { %>
+                                <div class="patient-name">Patient: <%= bed.patient.name %></div>
+                                <div class="patient-id">ID: <%= bed.patient.id %></div>
+                                <div class="admission-time">Admitted: <%= bed.admitDate ? bed.admitDate.toLocaleString() : "N/A" %></div>
+                            <% } else { %>
+                                <div class="patient-name">Ready for new admission.</div>
+                            <% } %>
+                        </div>
+
+                        <div class="bed-actions">
+                            <div class="department-tag"><%= bed.ward || "N/A" %></div>
+                            <button class="action-button">View Details</button>
                         </div>
                     </div>
-
-                    <!-- Activity Sidebar -->
-                    <div class="activity-sidebar">
-                        <div class="activity-header">
-                            <h3>Recent Bed Activity</h3>
-                            <p>Latest updates on bed allocations and status changes</p>
-                        </div>
-                        <div class="activity-list" id="activityList">
-                            <!-- Activity items will be populated by JavaScript -->
-                        </div>
-                        <button class="view-all-activities">View All Activities</button>
-                    </div>
-                </div>
+                <% }) %>
             </div>
         </div>
 
-        <script>
-         // Bed data structure
-let bedsData = [
-    {
-        id: 'ICU-01',
-        type: 'ICU Room',
-        status: 'occupied',
-        patient: {
-            name: 'Alice Smith',
-            id: 'P-001',
-            admissionTime: '2025-08-11 10:30 AM'
-        },
-        department: 'Critical Care'
-    },
-    {
-        id: 'ICU-02',
-        type: 'ICU Room',
-        status: 'available',
-        patient: null,
-        department: 'Critical Care'
-    },
-    {
-        id: 'ICU-03',
-        type: 'ICU Room',
-        status: 'cleaning',
-        patient: null,
-        department: 'Critical Care'
-    },
-    {
-        id: 'G-201',
-        type: 'General Room',
-        status: 'available',
-        patient: null,
-        department: 'Cardiology'
-    },
-    {
-        id: 'G-202',
-        type: 'General Room',
-        status: 'occupied',
-        patient: {
-            name: 'Bob Johnson',
-            id: 'P-002',
-            admissionTime: '2025-08-10 08:15 AM'
-        },
-        department: 'Cardiology'
-    },
-    {
-        id: 'G-203',
-        type: 'General Room',
-        status: 'available',
-        patient: null,
-        department: 'Orthopedics'
-    },
-    {
-        id: 'G-204',
-        type: 'General Room',
-        status: 'maintenance',
-        patient: null,
-        department: 'Orthopedics'
-    },
-    {
-        id: 'P-301',
-        type: 'Private Room',
-        status: 'available',
-        patient: null,
-        department: 'Oncology'
-    },
-    {
-        id: 'P-302',
-        type: 'Private Room',
-        status: 'occupied',
-        patient: {
-            name: 'Carol White',
-            id: 'P-003',
-            admissionTime: '2025-08-09 03:45 PM'
-        },
-        department: 'Oncology'
-    },
-    {
-        id: 'P-303',
-        type: 'Private Room',
-        status: 'available',
-        patient: null,
-        department: 'Pediatrics'
-    },
-    {
-        id: 'ER-01',
-        type: 'Emergency Room',
-        status: 'occupied',
-        patient: {
-            name: 'David Brown',
-            id: 'P-004',
-            admissionTime: '2025-08-11 09:20 AM'
-        },
-        department: 'Emergency'
-    },
-    {
-        id: 'ER-02',
-        type: 'Emergency Room',
-        status: 'available',
-        patient: null,
-        department: 'Emergency'
-    },
-    {
-        id: 'G-205',
-        type: 'General Room',
-        status: 'available',
-        patient: null,
-        department: 'Neurology'
-    },
-    {
-        id: 'G-206',
-        type: 'General Room',
-        status: 'cleaning',
-        patient: null,
-        department: 'Neurology'
-    },
-    {
-        id: 'P-304',
-        type: 'Private Room',
-        status: 'reserved',
-        patient: null,
-        department: 'Geriatrics'
-    },
-    {
-        id: 'ICU-04',
-        type: 'ICU Room',
-        status: 'occupied',
-        patient: {
-            name: 'Eve Davis',
-            id: 'P-005',
-            admissionTime: '2025-08-10 02:30 PM'
-        },
-        department: 'Critical Care'
-    },
-    {
-        id: 'G-207',
-        type: 'General Room',
-        status: 'available',
-        patient: null,
-        department: 'Neurology'
-    },
-    {
-        id: 'P-305',
-        type: 'Private Room',
-        status: 'available',
-        patient: null,
-        department: 'Dermatology'
-    }
-];
-
-// Activity data
-let activitiesData = [
-    {
-        type: 'assigned',
-        text: 'ICU-01 assigned to Patient ID: P001',
-        time: '5 mins ago',
-        icon: 'fas fa-user-plus'
-    },
-    {
-        type: 'discharged',
-        text: 'G-202 patient (P002) discharged',
-        time: '8 mins ago',
-        icon: 'fas fa-sign-out-alt'
-    },
-    {
-        type: 'assigned',
-        text: 'P-301 assigned to Patient ID: P003',
-        time: '12 mins ago',
-        icon: 'fas fa-user-plus'
-    },
-    {
-        type: 'moved',
-        text: 'G-204 moved to maintenance',
-        time: '15 mins ago',
-        icon: 'fas fa-tools'
-    }
-];
-
-// Current selected bed for assignment
-let selectedBed = null;
-
-// Initialize dashboard
-document.addEventListener('DOMContentLoaded', function() {
-    renderBedGrid();
-    renderActivityList();
-    updateStats();
-    initializeEventListeners();
-});
-
-// Render bed grid
-function renderBedGrid() {
-    const bedGrid = document.getElementById('bedGrid');
-    bedGrid.innerHTML = '';
-    
-    bedsData.forEach(bed => {
-        const bedCard = createBedCard(bed);
-        bedGrid.appendChild(bedCard);
-    });
-}
-
-// Create bed card element
-function createBedCard(bed) {
-    const card = document.createElement('div');
-    card.className = 'bed-card';
-    card.dataset.bedId = bed.id;
-    
-    const statusText = {
-        'occupied': 'Occupied',
-        'available': 'Available',
-        'cleaning': 'Cleaning in Progress',
-        'reserved': 'Reserved',
-        'maintenance': 'Under Maintenance'
-    };
-    
-    let patientInfo = '';
-    if (bed.patient) {
-        patientInfo = `
-            <div class="patient-info">
-                <div class="patient-name">Patient: ${bed.patient.name}</div>
-                <div class="patient-id">ID: ${bed.patient.id}</div>
-                <div class="admission-time">Admitted: ${bed.patient.admissionTime}</div>
+        <!-- Activity Sidebar -->
+        <div class="activity-sidebar">
+            <div class="activity-header">
+                <h3>Recent Bed Activity</h3>
+                <p>Latest updates on bed allocations and status changes</p>
             </div>
-        `;
-    } else if (bed.status === 'available') {
-        patientInfo = `
-            <div class="patient-info">
-                <div class="patient-name">Ready for new admission.</div>
+            <div class="activity-list" id="activityList">
+                <!-- You can add dynamic activity data here if available -->
             </div>
-        `;
-    } else if (bed.status === 'cleaning') {
-        patientInfo = `
-            <div class="patient-info">
-                <div class="patient-name">Ready for new admission.</div>
-            </div>
-        `;
-    } else if (bed.status === 'reserved') {
-        patientInfo = `
-            <div class="patient-info">
-                <div class="patient-name">Ready for new admission.</div>
-            </div>
-        `;
-    } else if (bed.status === 'maintenance') {
-        patientInfo = `
-            <div class="patient-info">
-                <div class="patient-name">Ready for new admission.</div>
-            </div>
-        `;
-    }
-    
-    let actionButton = '';
-    if (bed.status === 'available' || bed.status === 'cleaning') {
-        actionButton = '<button class="action-button" onclick="openAssignmentModal(\'' + bed.id + '\')">View Details</button>';
-    } else {
-        actionButton = '<button class="action-button">View Details</button>';
-    }
-    
-    card.innerHTML = `
-        <div class="bed-header">
-            <div class="bed-number">${bed.id}</div>
-            <span class="bed-status status-${bed.status}">${statusText[bed.status]}</span>
+            <button class="view-all-activities">View All Activities</button>
         </div>
-        <div class="bed-type">${bed.type}</div>
-        ${patientInfo}
-        <div class="bed-actions">
-            <div class="department-tag">${bed.department}</div>
-            ${actionButton}
-        </div>
-    `;
-    
-    // Add click handler for available beds
-    if (bed.status === 'available' || bed.status === 'cleaning') {
-        card.addEventListener('click', function() {
-            openAssignmentModal(bed.id);
-        });
-        card.style.cursor = 'pointer';
-    }
-    
-    return card;
-}
+    </div>
+</div>
 
-// Render activity list
-function renderActivityList() {
-    const activityList = document.getElementById('activityList');
-    activityList.innerHTML = '';
-    
-    activitiesData.forEach(activity => {
-        const activityItem = document.createElement('div');
-        activityItem.className = 'activity-item';
-        
-        activityItem.innerHTML = `
-            <div class="activity-icon ${activity.type}">
-                <i class="${activity.icon}"></i>
-            </div>
-            <div class="activity-content">
-                <div class="activity-text">${activity.text}</div>
-                <div class="activity-time">${activity.time}</div>
-            </div>
-        `;
-        
-        activityList.appendChild(activityItem);
-    });
-}
+    </div>
 
-// Update statistics
-function updateStats() {
-    const stats = bedsData.reduce((acc, bed) => {
-        acc.total++;
-        if (bed.status === 'occupied') acc.occupied++;
-        if (bed.status === 'available') acc.available++;
-        if (bed.status === 'cleaning' || bed.status === 'maintenance') acc.maintenance++;
-        return acc;
-    }, { total: 0, occupied: 0, available: 0, maintenance: 0 });
-    
-    document.querySelector('.total-beds .stat-number').textContent = stats.total;
-    document.querySelector('.occupied-beds .stat-number').textContent = stats.occupied;
-    document.querySelector('.available-beds .stat-number').textContent = stats.available;
-    document.querySelector('.maintenance-beds .stat-number').textContent = stats.maintenance;
-}
-
-// Open assignment modal
-function openAssignmentModal(bedId) {
-    selectedBed = bedsData.find(bed => bed.id === bedId);
-    if (!selectedBed || (selectedBed.status !== 'available' && selectedBed.status !== 'cleaning')) {
-        return;
-    }
-    
-    document.getElementById('selectedBedName').textContent = selectedBed.id;
-    document.getElementById('selectedBedDetails').textContent = `${selectedBed.type} - ${selectedBed.department}`;
-    
-    // Set current date and time
-    const now = new Date();
-    const dateString = now.toISOString().slice(0, 16);
-    document.getElementById('admissionDate').value = dateString;
-    
-    document.getElementById('assignmentModal').style.display = 'block';
-}
-
-// Close modal
-function closeModal() {
-    document.getElementById('assignmentModal').style.display = 'none';
-    selectedBed = null;
-    
-    // Clear form
-    document.getElementById('patientName').value = '';
-    document.getElementById('patientId').value = '';
-    document.getElementById('department').value = '';
-    document.getElementById('admissionDate').value = '';
-}
-
-// Confirm bed assignment
-function confirmAssignment() {
-    const patientName = document.getElementById('patientName').value.trim();
-    const patientId = document.getElementById('patientId').value.trim();
-    const department = document.getElementById('department').value;
-    const admissionDate = document.getElementById('admissionDate').value;
-    
-    if (!patientName || !patientId || !department || !admissionDate) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-    
-    // Update bed data
-    selectedBed.status = 'occupied';
-    selectedBed.patient = {
-        name: patientName,
-        id: patientId,
-        admissionTime: new Date(admissionDate).toLocaleString()
-    };
-    selectedBed.department = department;
-    
-    // Add activity
-    activitiesData.unshift({
-        type: 'assigned',
-        text: `${selectedBed.id} assigned to Patient ID: ${patientId}`,
-        time: 'Just now',
-        icon: 'fas fa-user-plus'
-    });
-    
-    // Keep only recent activities
-    if (activitiesData.length > 10) {
-        activitiesData = activitiesData.slice(0, 10);
-    }
-    
-    // Update UI
-    renderBedGrid();
-    renderActivityList();
-    updateStats();
-    
-    // Close modal
-    closeModal();
-    
-    // Show success message
-    showNotification(`Bed ${selectedBed.id} successfully assigned to ${patientName}`, 'success');
-}
-
-// Show notification
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#3b82f6'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 1001;
-        font-weight: 500;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Initialize event listeners
-function initializeEventListeners() {
-    // Modal close handlers
-    const modal = document.getElementById('assignmentModal');
-    const closeBtn = modal.querySelector('.close');
-    
-    closeBtn.addEventListener('click', closeModal);
-    
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    
-    // Filter handlers
-    const roomFilter = document.getElementById('roomFilter');
-    const bedTypeFilter = document.getElementById('bedTypeFilter');
-    const departmentFilter = document.getElementById('departmentFilter');
-    const resetFilters = document.querySelector('.reset-filters');
-    
-    roomFilter.addEventListener('input', applyFilters);
-    bedTypeFilter.addEventListener('change', applyFilters);
-    departmentFilter.addEventListener('change', applyFilters);
-    resetFilters.addEventListener('click', resetAllFilters);
-}
-
-// Apply filters
-function applyFilters() {
-    const roomFilter = document.getElementById('roomFilter').value.toLowerCase();
-    const bedTypeFilter = document.getElementById('bedTypeFilter').value;
-    const departmentFilter = document.getElementById('departmentFilter').value;
-    
-    const bedCards = document.querySelectorAll('.bed-card');
-    
-    bedCards.forEach(card => {
-        const bedId = card.dataset.bedId;
-        const bed = bedsData.find(b => b.id === bedId);
-        
-        let show = true;
-        
-        // Room/Patient name filter
-        if (roomFilter) {
-            const searchText = (bed.id + ' ' + (bed.patient?.name || '')).toLowerCase();
-            if (!searchText.includes(roomFilter)) {
-                show = false;
-            }
-        }
-        
-        // Bed type filter
-        if (bedTypeFilter) {
-            const bedType = bed.type.split(' ')[0]; // Extract "ICU", "General", "Private", "Emergency"
-            if (bedType !== bedTypeFilter) {
-                show = false;
-            }
-        }
-        
-        // Department filter
-        if (departmentFilter && bed.department !== departmentFilter) {
-            show = false;
-        }
-        
-        card.style.display = show ? 'block' : 'none';
-    });
-}
-
-// Reset all filters
-function resetAllFilters() {
-    document.getElementById('roomFilter').value = '';
-    document.getElementById('bedTypeFilter').value = '';
-    document.getElementById('departmentFilter').value = '';
-    
-    const bedCards = document.querySelectorAll('.bed-card');
-    bedCards.forEach(card => {
-        card.style.display = 'block';
-    });
-}
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', function(event) {
-    // Escape key to close modal
-    if (event.key === 'Escape' && document.getElementById('assignmentModal').style.display === 'block') {
-        closeModal();
-    }
-});
-
-        </script>
     <%- include('./partials/footer.ejs') %>

@@ -8,6 +8,7 @@ const Doctor = require("../models/Doctors");
 const Notification = require("../models/Notification");
 const moment = require("moment");
 const Patient = require("../models/Patient");
+const OPDQueue = require("../models/Opd");
 
 // const bedOccupancyData = [];
 
@@ -292,16 +293,61 @@ router.post("/inventory/delete/:id", ensureAuthenticated, async (req, res) => {
   }
 });
 
-// ======== opd =========
-router.get("/opd", (req, res) => {
-  res.render("opd", { title: "OPD Queue Management" });
-});
 
 // ========= beds managment ======
 
-router.get("/bed", (req, res) => {
-  res.render("bed-managemnt", { title: "Beds Management" });
+router.get("/bed", ensureAuthenticated, async (req, res) => {
+
+    const beds = await Bed.find().lean();
+
+  const totalBeds = beds.length;
+  const occupiedBeds = beds.filter(b => b.status === 'occupied').length;
+  const availableBeds = beds.filter(b => b.status === 'available').length;
+  const maintenanceBeds = 0; // Add if you have a field for maintenance
+
+  res.render('bed-managemnt', {
+    title: 'Beds Management',
+    beds,
+    totalBeds,
+    occupiedBeds,
+    availableBeds,
+    maintenanceBeds
+  });
+//   res.render("bed-managemnt", { title: "Beds Management" });
 });
+
+
+// ======== opd =========
+router.get("/opd", ensureAuthenticated, async (req, res) => {
+  
+  try {
+    const queueData = await OPDQueue.find().sort({ checkInTime: 1 }).lean();
+    const doctors = await Doctor.find({}).sort({ name: 1 });
+
+    const totalPatients = queueData.length;
+    const avgWaitTime = totalPatients 
+      ? Math.round(queueData.reduce((sum, p) => sum + (p.waitTime || 0), 0) / totalPatients)
+      : 0;
+
+    const completed = queueData.filter(p => p.status === "completed").length;
+    const waiting = queueData.filter(p => p.status === "waiting").length;
+
+    res.render("opd", {
+       title: "OPD Queue Management",
+       totalPatients,
+       avgWaitTime,
+       waiting,
+       completed,
+       doctorsData: doctors,
+       queue: queueData
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch queue" });
+  }
+});
+
+
 
 // =========== dashboard ======
 // =========Emergency route ========

@@ -212,18 +212,26 @@
                             <td><%= new Date(appointment.date).toLocaleDateString() %></td>
                             <td><%= appointment.time %></td>
                             <td>
-                                <% if (appointment.status === "Upcoming") { %>
+                                <% if (appointment.status === "upcoming") { %>
                                     <span class="badge bg-info text-dark"><%= appointment.status %></span>
-                                <% } else if (appointment.status === "Completed") { %>
+                                <% } else if (appointment.status === "completed") { %>
                                     <span class="badge bg-success"><%= appointment.status %></span>
                                 <% } else { %>
                                     <span class="badge bg-danger"><%= appointment.status %></span>
                                 <% } %>
                             </td>
                             <td>
-                                <button class="btn btn-warning" onclick="rescheduleAppointment('<%= appointment._id %>')">Reschedule</button>
-<button class="btn btn-danger" onclick="cancelAppointment('<%= appointment._id %>')">Cancel</button>
 
+                                <% if (appointment.status === "rescheduled") { %>
+                                    <button class="btn btn-warning" onclick="rescheduleAppointment('<%= appointment._id %>')">Reschedule</button>
+<button class="btn btn-danger" onclick="cancelAppointment('<%= appointment._id %>')">Cancel</button>
+                                <% } else if (appointment.status === "completed") { %>
+                                    <em>No actions</em>
+                                <% } else { %>
+                                    <button class="btn btn-warning" onclick="rescheduleAppointment('<%= appointment._id %>')">Reschedule</button>
+<button class="btn btn-danger" onclick="cancelAppointment('<%= appointment._id %>')">Cancel</button>
+                                <% } %>
+                                
                             </td>
                         </tr>
                     <% }) %>

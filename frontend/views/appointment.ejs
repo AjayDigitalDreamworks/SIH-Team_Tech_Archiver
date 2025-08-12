@@ -164,6 +164,8 @@
                                                     <span class="badge bg-warning text-dark">Pending</span>
                                                     <% } else if (appointment.status.toLowerCase()==='confirmed' ) { %>
                                                         <span class="badge bg-success">Confirmed</span>
+                                                        <% } else if (appointment.status.toLowerCase()==='rescheduled' ) { %>
+                                                        <span class="badge bg-warning">rescheduled</span>
                                                         <% } else if (appointment.status.toLowerCase()==='completed' ) { %>
                                                             <span class="badge bg-info text-dark">Completed</span>
                                                             <% } else if (appointment.status.toLowerCase()==='cancelled' ) { %>
@@ -171,8 +173,8 @@
                                                                 <% } %>
                                             </div>
                                             <div class="appointment-actions">
-                                                <% if (appointment.status.toLowerCase()==='pending' ) { %>
-
+                                               <% if (appointment.status.toLowerCase() === 'pending' || appointment.status.toLowerCase() === 'rescheduled') { %>
+ 
                                                     <form action="/admin/appointments/<%= appointment._id %>/confirm"
                                                         method="POST" class="d-inline">
                                                         <!-- <button type="submit" class="btn btn-sm btn-success">Confirm</button> -->
