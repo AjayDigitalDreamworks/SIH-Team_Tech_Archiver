@@ -116,6 +116,7 @@
                 <th>Preferred Doctor</th>
                 <th>Preferred Date</th>
                 <th>Emergency</th>
+                <th>Emergency Reason</th>
                 <th>Documents</th>
                 <th>Actions</th>
                                 </tr>
@@ -143,6 +144,7 @@
                                             <td>
                         <%= ad.emergencyCase ? "Yes" : "No" %>
                     </td>
+                    <th><%= ad.emergencyReason %></th>
                                             <td>
                                                  <% ad.documents.forEach(doc=> { %>
                             <a href="<%= doc %>" target="_blank">View</a><br />

@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const Appointment = require("../models/Appointment");
-const { ensureAuthenticated } = require("../config/auth");
+const { ensureAuthenticated , checkRoles } = require("../config/auth");
 const Doctor = require("../models/Doctors");
 const Inventory = require("../models/Inventory");
 const Notification = require("../models/Notification");
@@ -29,7 +29,7 @@ const uploadToCloudinary = (fileBuffer, fileName) => {
 };
 
 // ===== Create Admission =====
-router.post("/admission", ensureAuthenticated, upload.array("documents"), async (req, res) => {
+router.post("/admission", ensureAuthenticated,  upload.array("documents"), async (req, res) => {
     try {
         const fileUploads = await Promise.all(
             req.files.map(file =>
@@ -54,7 +54,7 @@ router.post("/admission", ensureAuthenticated, upload.array("documents"), async 
 });
 
 // ===== List Admissions for Logged-in User =====
-router.get("/admission/list", ensureAuthenticated, async (req, res) => {
+router.get("/admission/list", ensureAuthenticated, checkRoles(['patient']), async (req, res) => {
     try {
         const admissions = await Admission.find({ userId: req.user._id })
             .sort({ createdAt: -1 })
@@ -97,7 +97,7 @@ router.post("/admission/:id/delete", ensureAuthenticated, async (req, res) => {
 
 
 // ===== Render Admission Form =====
-router.get("/admission", ensureAuthenticated, async (req, res) => {
+router.get("/admission", ensureAuthenticated, checkRoles(['patient']), async (req, res) => {
     try {
         const doctors = await Doctor.find();
         res.render("patient/admission", {
@@ -115,7 +115,7 @@ router.get("/admission", ensureAuthenticated, async (req, res) => {
 
 
 // ===== Book Appointments =====
-router.get("/bookappointments", ensureAuthenticated, async (req, res) => {
+router.get("/bookappointments", ensureAuthenticated, checkRoles(['patient']), async (req, res) => {
     try {
         const appointments = await Appointment.find({ patient: req.user._id })
             .populate("doctor")
@@ -172,7 +172,7 @@ router.post('/appoint/:id/delete', ensureAuthenticated, async (req, res) => {
 });
 
 // ===== Patient Dashboard =====
-router.get("/dashboard", async (req, res) => {
+router.get("/dashboard", ensureAuthenticated , checkRoles(['patient']), async (req, res) => {
     try {
         if (!req.isAuthenticated()) {
             return res.redirect("/api/auth/login"); // redirect to login if not logged in

@@ -16,6 +16,7 @@ const admissionSchema = new mongoose.Schema({
     preferredDate: Date,
     preferredTime: String,
     emergencyCase: Boolean,
+    emergencyReason: String,
     documents: [String], // Cloudinary URLs
     createdAt: { type: Date, default: Date.now }
 });

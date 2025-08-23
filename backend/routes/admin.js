@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/Appointment");
-const { ensureAuthenticated } = require("../config/auth");
+const { ensureAuthenticated , checkRoles } = require("../config/auth");
 const Bed = require("../models/Bed");
 const Inventory = require("../models/Inventory");
 const Doctor = require("../models/Doctors");
@@ -12,7 +12,7 @@ const {Queue} = require("../models/Opd");
 
 // const bedOccupancyData = [];
 
-router.get("/dashboard", ensureAuthenticated, async (req, res) => {
+router.get("/dashboard", ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     // Only allow admins or doctors
     if (req.user.role !== "admin" && req.user.role !== "doctor") {
@@ -112,7 +112,7 @@ const opd = opds.length;
 });
 
 // =========== appointment ==========
-router.get("/appointments", ensureAuthenticated, async (req, res) => {
+router.get("/appointments", ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     const appointments = await Appointment.find();
     const confirmAppointments = appointments.filter(
@@ -219,7 +219,7 @@ router.post(
 );
 
 // ===== inventory ======
-router.get("/inventory", ensureAuthenticated, async (req, res) => {
+router.get("/inventory", ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     const inventory = await Inventory.find().sort({ last_updated: -1 });
 
@@ -300,7 +300,7 @@ router.post("/inventory/delete/:id", ensureAuthenticated, async (req, res) => {
 
 // ========= beds managment ======
 
-router.get('/bed', ensureAuthenticated, async (req, res) => {
+router.get('/bed', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
     try {
         const beds = await Bed.find();
         res.render('bed-managemnt', { beds, title:"Bed Management" });
@@ -310,7 +310,7 @@ router.get('/bed', ensureAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/bed/new', ensureAuthenticated, (req, res) => {
+router.get('/bed/new', ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
   res.render('newBed.ejs', {title:"Bed Management"});
 });
 
@@ -357,7 +357,7 @@ router.post('/bed', ensureAuthenticated, async (req, res) => {
 });
 
 // Edit Bed - Render Edit Form
-router.get('/bed/:id/edit', ensureAuthenticated, async (req, res) => {
+router.get('/bed/:id/edit', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     const bed = await Bed.findById(req.params.id);
     if (!bed) return res.status(404).send("Bed not found");
@@ -423,7 +423,7 @@ router.post('/bed/:id/delete', ensureAuthenticated, async (req, res) => {
 
 
 // Show confirmation page
-router.get('/bed/:id/delete', async (req, res) => {
+router.get('/bed/:id/delete', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   const bed = await Bed.findById(req.params.id);
   if (!bed) return res.status(404).send('Bed not found');
   res.render('confirmDelete', { bed, title: "Confirm Delete" });
@@ -435,7 +435,7 @@ router.get('/bed/:id/delete', async (req, res) => {
 
 // ======== opd =========
 
-router.get('/opd',ensureAuthenticated, async (req, res) => {
+router.get('/opd',ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     let data = await Queue.find();
     console.log(data);
@@ -450,14 +450,14 @@ router.get('/opd',ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/opd/new', ensureAuthenticated, (req, res) => {
+router.get('/opd/new', ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
 
   res.render('newPatient.ejs', {title:"OPD Management"});
 
 });
 
 
-router.post('/opd', ensureAuthenticated, async (req, res) => {
+router.post('/opd', ensureAuthenticated,  async (req, res) => {
   let {name, phone, department, appointmentTime, status, priority, waitTime, position} = req.body;
   // Generate a unique id using timestamp
   let uniqueId = `T${Date.now()}`;
@@ -483,7 +483,7 @@ router.post('/opd', ensureAuthenticated, async (req, res) => {
 });
 
 // Edit Patient
-router.get('/opd/:id/edit', ensureAuthenticated, async (req, res) => {
+router.get('/opd/:id/edit', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
     const patient = await Queue.findOne({ id: req.params.id });
     if (!patient) {
@@ -530,7 +530,7 @@ router.post('/opd/:id/delete', ensureAuthenticated, async (req, res) => {
 
 // =========== dashboard ======
 // =========Emergency route ========
-router.get("/emergency", (req, res) => {
+router.get("/emergency", ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
   res.render("emergency", { title: "Emergency Admissions" });
 });
 

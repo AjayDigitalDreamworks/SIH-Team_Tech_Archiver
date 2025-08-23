@@ -32,12 +32,17 @@
       </div>
       <ul class="nav-menu">
         <li><a href="/" class="nav-link active">Home</a></li>
+       
         <li><a href="/admin/dashboard" class="nav-link">Admin Dashboard</a></li>
+       
         <li><a href="/patient/dashboard" class="nav-link">Patient Dashboard</a></li>
+        
       </ul>
       <div class="nav-actions">
+         <% if (!isAuthenticated) { %>
         <a href="/api/auth/login"><button class="btn-login">Login</button></a>
         <a href="/api/auth/login"><button class="btn-signup">Sign Up</button></a>
+        <% } %>
       </div>
     </nav>
   </header>

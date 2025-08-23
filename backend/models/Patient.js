@@ -10,7 +10,7 @@ const patientSchema = new mongoose.Schema({
     medications: String,
     allergies: String,
     pastConditions: String,
-    documents: [String], // store file paths
+    documents: [String],
     department: String,
     doctor: String,
     date: Date,

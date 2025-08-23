@@ -279,13 +279,12 @@
 
 <script>
   function openEditModal(itemId) {
-    // Find the row data based on itemId
     const row = [...document.querySelectorAll('#inventoryTableBody tr')]
       .find(r => r.querySelector('td')?.innerText.trim() === itemId);
 
     if (!row) return;
 
-    // Extract values from the row
+    // Extract values
     const name = row.cells[1].innerText.trim();
     const category = row.cells[2].innerText.trim();
     const stock = row.cells[3].innerText.trim();
@@ -300,12 +299,78 @@
     document.getElementById('editUnit').value = unit;
     document.getElementById('editStatus').value = status;
 
-    // Set form action
-    document.getElementById('editForm').action = `/admin/inventory/edit/${itemId}`;
+    // ✅ Fix: use backticks for dynamic route
+    document.getElementById('editForm').action = /admin/inventory/edit/${itemId};
 
-    // Show the modal
+    // Show modal
     new bootstrap.Modal(document.getElementById('editModal')).show();
   }
+
+  // Search & Filter
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const tableBody = document.getElementById('inventoryTableBody');
+
+    function filterTable() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const statusValue = statusFilter.value;
+      const categoryValue = categoryFilter.value;
+
+      let visibleCount = 0;
+
+      tableBody.querySelectorAll('tr').forEach(row => {
+        if (row.classList.contains('no-results')) return;
+
+        if (row.cells.length < 8) return;
+
+        const name = row.cells[1].textContent.toLowerCase();
+        const category = row.cells[2].textContent;
+        const status = row.cells[5].textContent;
+
+        const matchesSearch = searchTerm === '' || name.includes(searchTerm);
+        const matchesStatus = statusValue === '' || status === statusValue;
+        const matchesCategory = categoryValue === '' || category === categoryValue;
+
+        if (matchesSearch && matchesStatus && matchesCategory) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // ✅ Fix: wrap HTML in backticks
+      let noResultsRow = tableBody.querySelector('tr.no-results');
+      if (visibleCount === 0) {
+        if (!noResultsRow) {
+          noResultsRow = document.createElement('tr');
+          noResultsRow.className = 'no-results';
+          noResultsRow.innerHTML = `<td colspan="8" class="text-center text-muted">
+            No items found matching your criteria
+          </td>`;
+          tableBody.appendChild(noResultsRow);
+        }
+      } else if (noResultsRow) {
+        noResultsRow.remove();
+      }
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+    categoryFilter.addEventListener('change', filterTable);
+
+    refreshBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      statusFilter.value = '';
+      categoryFilter.value = '';
+      filterTable();
+    });
+
+    filterTable(); // Run once on load
+  });
 </script>
 
 <%- include('./partials/footer.ejs') %>

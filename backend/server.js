@@ -39,8 +39,15 @@ mongoose
   .catch((err) => console.log(err));
 
 // Sample route
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+});
+
+
 app.get("/", (req, res) => {
-  res.render("index", { title: "Welcome to the Admin Panel" });
+  res.render("index", { isAuthenticated: req.isAuthenticated(), user: req.user , title: "Welcome to Admin Panel"});
 });
 
 

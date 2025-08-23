@@ -211,13 +211,36 @@
 
                     <!-- Emergency Status Section -->
                     <section class="form-section">
-                        <h2>Emergency Status</h2>
-                        
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="emergencyCase" name="emergencyCase">
-                            <label for="emergencyCase" class="checkbox-label">Mark as Emergency Case</label>
-                        </div>
-                    </section>
+    <h2>Emergency Status</h2>
+    
+    <div class="checkbox-group">
+        <input type="checkbox" id="emergencyCase" name="emergencyCase">
+        <label for="emergencyCase" class="checkbox-label">Mark as Emergency Case</label>
+    </div>
+</section>
+
+<div class="form-group" id="emergencyDetails" style="display: none;">
+    <label for="emergencyReason">What's emergency</label>
+    <input type="text" id="emergencyReason" name="emergencyReason">
+</div>
+
+<script>
+    const emergencyCheckbox = document.getElementById('emergencyCase');
+    const emergencyDetails = document.getElementById('emergencyDetails');
+    const emergencyReason = document.getElementById('emergencyReason');
+
+    emergencyCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            emergencyDetails.style.display = 'block';
+            emergencyReason.setAttribute('required', 'required');
+        } else {
+            emergencyDetails.style.display = 'none';
+            emergencyReason.removeAttribute('required');
+            emergencyReason.value = ''; // optional: clear the input
+        }
+    });
+</script>
+
 
                     <!-- Review & Submit Section -->
                     <section class="form-section">

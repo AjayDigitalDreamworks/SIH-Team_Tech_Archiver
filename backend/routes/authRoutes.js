@@ -26,11 +26,11 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
-function isValidPassword(password) {
-  const passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  return passwordRegex.test(password);
-}
+// function isValidPassword(password) {
+//   const passwordRegex =
+//     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+//   return passwordRegex.test(password);
+// }
 
 router.get("/register", (req, res) => {
   if (req.isAuthenticated()) {
@@ -92,7 +92,7 @@ router.post("/register", async (req, res) => {
   html: `
     <h2>Hello!</h2>
     <p>Thanks for registering. Please click the link below to verify your email address:</p>
-    <a href="http://localhost:3000/api/auth/verify-email?token=${verificationToken}">Verify Email</a>
+    <a href="https://sih-team-tech-archiver.onrender.com/api/auth/verify-email?token=${verificationToken}">Verify Email</a>
     <p>If you didn’t request this, please ignore this email.</p>
   `,
 };
