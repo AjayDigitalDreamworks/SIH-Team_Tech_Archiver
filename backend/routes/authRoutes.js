@@ -22,7 +22,7 @@ router.get("/login", (req, res) => {
 
 function isValidEmail(email) {
   const emailRegex =
-    /^[\w.-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com|icloud\.com)$/i;
+    /^[\w.-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com|icloud\.com|acem.edu\.in)$/i;
   return emailRegex.test(email);
 }
 
