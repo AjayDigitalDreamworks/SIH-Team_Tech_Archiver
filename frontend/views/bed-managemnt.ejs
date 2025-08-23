@@ -1,133 +1,149 @@
 <%- include('./partials/sidebar.ejs') %>
-    <link rel="stylesheet" href="/css/bed.css">
-    <div class="content-area p-4">
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bed Management Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .dashboard-card {
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1rem;
+      text-align: center;
+    }
+    .bed-card {
+      border-left: 6px solid;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      padding: 1rem;
+    }
+    .bed-card.available { border-color: #198754; }
+    .bed-card.occupied { border-color: #dc3545; }
+    .bed-card.cleaning { border-color: #ffc107; }
+    .bed-card.maintenance { border-color: #6c757d; }
+    .bed-card.reserved { border-color: #0d6efd; }
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-available { background: #d1e7dd; color: #0f5132; }
+    .badge-occupied { background: #f8d7da; color: #842029; }
+    .badge-cleaning { background: #fff3cd; color: #664d03; }
+    .badge-maintenance { background: #e2e3e5; color: #41464b; }
+    .badge-reserved { background: #cfe2ff; color: #084298; }
+  </style>
+</head>
+<body>
+<div class="container-fluid px-4 py-4">
+  <!-- <h4 class="fw-bold mb-4">Bed Management Dashboard</h4> -->
 
-        <!-- <div class="main-content"> -->
-        <!-- Header -->
-
-        <div class="dashboard-content">
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="stat-card total-beds">
-            <div class="stat-icon">
-                <i class="fas fa-bed"></i>
-            </div>
-            <div class="stat-info">
-                <h3>Total Beds</h3>
-                <div class="stat-number"><%= totalBeds %></div>
-            </div>
-        </div>
-        <div class="stat-card occupied-beds">
-            <div class="stat-icon">
-                <i class="fas fa-user-injured"></i>
-            </div>
-            <div class="stat-info">
-                <h3>Occupied Beds</h3>
-                <div class="stat-number"><%= occupiedBeds %></div>
-            </div>
-        </div>
-        <div class="stat-card available-beds">
-            <div class="stat-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-info">
-                <h3>Available Beds</h3>
-                <div class="stat-number"><%= availableBeds %></div>
-            </div>
-        </div>
-        <div class="stat-card maintenance-beds">
-            <div class="stat-icon">
-                <i class="fas fa-tools"></i>
-            </div>
-            <div class="stat-info">
-                <h3>Cleaning/Maintenance</h3>
-                <div class="stat-number"><%= maintenanceBeds %></div>
-            </div>
-        </div>
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="dashboard-card">
+        <div class="fs-4 fw-bold"><%= beds.length %></div>
+        <div>Total Beds</div>
+      </div>
     </div>
-
-    <!-- Bed Status Section -->
-    <div class="bed-management-section">
-        <div class="bed-status-container">
-            <div class="section-header">
-                <h2>Real-Time Bed Status</h2>
-                <p>Monitor and manage bed availability across departments</p>
-                <div class="filters">
-                    <select id="roomFilter">
-                        <option value="">Search by Room or Patient Name...</option>
-                        <% 
-                        // dynamically add unique rooms from beds
-                        let rooms = [...new Set(beds.map(bed => bed.room).filter(r => r))];
-                        rooms.forEach(room => { %>
-                            <option value="<%= room %>"><%= room %></option>
-                        <% }) %>
-                    </select>
-                    <select id="bedTypeFilter">
-                        <option value="">All Bed Types</option>
-                        <option value="ICU">ICU</option>
-                        <option value="General">General</option>
-                        <option value="Private">Private</option>
-                        <option value="Emergency">Emergency</option>
-                    </select>
-                    <select id="departmentFilter">
-                        <option value="">All Departments</option>
-                        <option value="Critical Care">Critical Care</option>
-                        <option value="Cardiology">Cardiology</option>
-                        <option value="Orthopedics">Orthopedics</option>
-                        <option value="Emergency">Emergency</option>
-                        <option value="Neurology">Neurology</option>
-                    </select>
-                </div>
-                <button class="reset-filters">Reset Filters</button>
-            </div>
-
-            <!-- Bed Grid -->
-            <div class="bed-grid" id="bedGrid">
-                <% beds.forEach(bed => { %>
-                    <div class="bed-card" data-bed-id="<%= bed.bedId %>">
-                        <div class="bed-header">
-                            <div class="bed-number"><%= bed.bedId %></div>
-                            <span class="bed-status status-<%= bed.status %>">
-                                <%= bed.status.charAt(0).toUpperCase() + bed.status.slice(1) %>
-                            </span>
-                        </div>
-
-                        <div class="bed-type"><%= bed.condition || "General" %></div>
-
-                        <div class="patient-info">
-                            <% if (bed.status === "occupied" && bed.patient && bed.patient.name) { %>
-                                <div class="patient-name">Patient: <%= bed.patient.name %></div>
-                                <div class="patient-id">ID: <%= bed.patient.id %></div>
-                                <div class="admission-time">Admitted: <%= bed.admitDate ? bed.admitDate.toLocaleString() : "N/A" %></div>
-                            <% } else { %>
-                                <div class="patient-name">Ready for new admission.</div>
-                            <% } %>
-                        </div>
-
-                        <div class="bed-actions">
-                            <div class="department-tag"><%= bed.ward || "N/A" %></div>
-                            <button class="action-button">View Details</button>
-                        </div>
-                    </div>
-                <% }) %>
-            </div>
-        </div>
-
-        <!-- Activity Sidebar -->
-        <div class="activity-sidebar">
-            <div class="activity-header">
-                <h3>Recent Bed Activity</h3>
-                <p>Latest updates on bed allocations and status changes</p>
-            </div>
-            <div class="activity-list" id="activityList">
-                <!-- You can add dynamic activity data here if available -->
-            </div>
-            <button class="view-all-activities">View All Activities</button>
-        </div>
+    <div class="col-md-3">
+      <div class="dashboard-card">
+        <div class="fs-4 fw-bold text-danger"><%= beds.filter(b => b.status === 'occupied').length %></div>
+        <div>Occupied Beds</div>
+      </div>
     </div>
+    <div class="col-md-3">
+      <div class="dashboard-card">
+        <div class="fs-4 fw-bold text-success"><%= beds.filter(b => b.status === 'available').length %></div>
+        <div>Available Beds</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="dashboard-card">
+        <div class="fs-4 fw-bold text-warning"><%= beds.filter(b => b.status === 'maintenance').length %></div>
+        <div>Cleaning/Maintenance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters (UI Only) -->
+  <div class="card mb-4">
+    <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
+      <input type="text" class="form-control w-auto" placeholder="Search by Room or Patient Name...">
+      <select class="form-select w-auto">
+        <option>All Bed Types</option>
+      </select>
+      <select class="form-select w-auto">
+        <option>All Departments</option>
+      </select>
+      <button class="btn btn-outline-secondary">Reset Filters</button>
+      <a href="/admin/bed/new" class="btn btn-primary">Add The Bed</a>
+    </div>
+  </div>
+
+  <!-- Bed Cards -->
+  <div class="row g-3">
+    <% beds.forEach(bed => { 
+      const statusClass = 
+        bed.status === 'available' ? 'available' :
+        bed.status === 'occupied' ? 'occupied' :
+        bed.status === 'cleaning' ? 'cleaning' :
+        bed.status === 'maintenance' ? 'maintenance' :
+        bed.status === 'reserved' ? 'reserved' : '';
+
+      const badgeClass =
+        bed.status === 'available' ? 'badge-available' :
+        bed.status === 'occupied' ? 'badge-occupied' :
+        bed.status === 'cleaning' ? 'badge-cleaning' :
+        bed.status === 'maintenance' ? 'badge-maintenance' :
+        bed.status === 'reserved' ? 'badge-reserved' : '';
+    %>
+    <div class="col-md-4">
+      <div class="bed-card <%= statusClass %>">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-bold fs-5"><%= bed.bedId %></div>
+            <div class="text-muted"><%= bed.ward %> Room</div>
+          </div>
+          <span class="badge badge-status <%= badgeClass %> text-uppercase"><%= bed.status %></span>
+        </div>
+
+        <div class="mt-2">
+          <% if (bed.status === 'occupied' && bed.patient) { %>
+            <div><strong>Patient:</strong> <%= bed.patient.name %></div>
+            <div><small>ID: <%= bed.patient.id %></small></div>
+            <div><small>Admitted: <%= bed.admitDate?.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></small></div>
+            <% if (bed.dischargeDate) { %>
+              <div><small>Discharge: <%= bed.dischargeDate.toLocaleDateString('en-CA') %></small></div>
+            <% } %>
+          <% } else { %>
+            <div>Ready for new admission.</div>
+          <% } %>
+        </div>
+
+        <div class="mt-2">
+          <div><small><strong><%= bed.department || bed.ward || '-' %></strong></small></div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+          <a href="/admin/bed/<%= bed._id %>/edit" class="btn btn-outline-primary btn-sm">EDIT</a>
+          <a href="/admin/bed/<%= bed._id %>/delete" class="btn btn-danger btn-sm">Delete</a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
 </div>
 
-    </div>
-
-    <%- include('./partials/footer.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

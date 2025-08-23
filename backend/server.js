@@ -11,6 +11,7 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cors());
 require("./config/passport")(passport);
 
@@ -50,6 +51,10 @@ app.use('/patient', patientRouter);
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+
+
+// const methodOverride = require('method-override');
+// app.use(methodOverride('_method'));
 
 
 // Port configuration

@@ -8,7 +8,7 @@ const Doctor = require("../models/Doctors");
 const Notification = require("../models/Notification");
 const moment = require("moment");
 const Patient = require("../models/Patient");
-const OPDQueue = require("../models/Opd");
+const {Queue} = require("../models/Opd");
 
 // const bedOccupancyData = [];
 
@@ -27,6 +27,9 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
 
 
 
+const opds = await Queue.find({});
+
+const opd = opds.length;
     // Beds summary
     const beds = await Bed.find({});
     const totalBeds = beds.length;
@@ -92,6 +95,7 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
       // New data for OPD breakdown
       //   opdBreakdownLabels,
       //   opdBreakdownData
+      opd,
 
       opdBreakdownLabels: [
         "General Medicine",
@@ -296,56 +300,231 @@ router.post("/inventory/delete/:id", ensureAuthenticated, async (req, res) => {
 
 // ========= beds managment ======
 
-router.get("/bed", ensureAuthenticated, async (req, res) => {
-
-    const beds = await Bed.find().lean();
-
-  const totalBeds = beds.length;
-  const occupiedBeds = beds.filter(b => b.status === 'occupied').length;
-  const availableBeds = beds.filter(b => b.status === 'available').length;
-  const maintenanceBeds = 0; // Add if you have a field for maintenance
-
-  res.render('bed-managemnt', {
-    title: 'Beds Management',
-    beds,
-    totalBeds,
-    occupiedBeds,
-    availableBeds,
-    maintenanceBeds
-  });
-//   res.render("bed-managemnt", { title: "Beds Management" });
+router.get('/bed', ensureAuthenticated, async (req, res) => {
+    try {
+        const beds = await Bed.find();
+        res.render('bed-managemnt', { beds, title:"Bed Management" });
+    } catch (err) {
+        console.error("Error fetching beds:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
+
+router.get('/bed/new', ensureAuthenticated, (req, res) => {
+  res.render('newBed.ejs', {title:"Bed Management"});
+});
+
+router.post('/bed', ensureAuthenticated, async (req, res) => {
+  try {
+    const {
+      bedId,
+      ward,
+      floor,
+      room,
+      status,
+      patientName,
+      patientId,
+      doctor,
+      condition,
+      admitDate,
+      dischargeDate
+    } = req.body;
+
+    // Build patient object only if status is occupied and patient info is provided
+    const patient = (status === 'occupied' && patientName && patientId)
+      ? { name: patientName, id: patientId }
+      : undefined;
+
+    const newBed = new Bed({
+      bedId,
+      ward,
+      floor,
+      room,
+      status,
+      patient,
+       doctor,
+      condition,
+      admitDate: admitDate ? new Date(admitDate) : undefined,
+      dischargeDate: dischargeDate ? new Date(dischargeDate) : undefined
+    });
+
+    await newBed.save();
+    res.redirect('/admin/bed');
+  } catch (err) {
+    console.error("Error adding bed:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Edit Bed - Render Edit Form
+router.get('/bed/:id/edit', ensureAuthenticated, async (req, res) => {
+  try {
+    const bed = await Bed.findById(req.params.id);
+    if (!bed) return res.status(404).send("Bed not found");
+    res.render('editBed.ejs', { bed, title:"Bed Management" });
+  } catch (err) {
+    console.error("Error fetching bed:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Update Bed
+router.post('/bed/:id', ensureAuthenticated, async (req, res) => {
+  try {
+    const {
+      bedId,
+      ward,
+      floor,
+      room,
+      status,
+      patientName,
+      patientId,
+      doctor,
+      condition,
+      admitDate,
+      dischargeDate
+    } = req.body;
+
+    const patient = (status === 'occupied' && patientName && patientId)
+      ? { name: patientName, id: patientId }
+      : undefined;
+
+    await Bed.findByIdAndUpdate(req.params.id, {
+      bedId,
+      ward,
+      floor,
+      room,
+      status,
+      patient,
+      doctor,
+      condition,
+      admitDate: admitDate ? new Date(admitDate) : undefined,
+      dischargeDate: dischargeDate ? new Date(dischargeDate) : undefined
+    });
+
+    res.redirect('/admin/bed');
+  } catch (err) {
+    console.error("Error updating bed:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete Bed
+router.post('/bed/:id/delete', ensureAuthenticated, async (req, res) => {
+  try {
+    await Bed.findByIdAndDelete(req.params.id);
+    res.redirect('/admin/bed');
+  } catch (err) {
+    console.error("Error deleting bed:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+// Show confirmation page
+router.get('/bed/:id/delete', async (req, res) => {
+  const bed = await Bed.findById(req.params.id);
+  if (!bed) return res.status(404).send('Bed not found');
+  res.render('confirmDelete', { bed, title: "Confirm Delete" });
+});
+
+
+
 
 
 // ======== opd =========
-router.get("/opd", ensureAuthenticated, async (req, res) => {
-  
+
+router.get('/opd',ensureAuthenticated, async (req, res) => {
   try {
-    const queueData = await OPDQueue.find().sort({ checkInTime: 1 }).lean();
-    const doctors = await Doctor.find({}).sort({ name: 1 });
+    let data = await Queue.find();
+    console.log(data);
 
-    const totalPatients = queueData.length;
-    const avgWaitTime = totalPatients 
-      ? Math.round(queueData.reduce((sum, p) => sum + (p.waitTime || 0), 0) / totalPatients)
-      : 0;
+    res.render("opd.ejs", { patients: data , title:"OPD Management"});
 
-    const completed = queueData.filter(p => p.status === "completed").length;
-    const waiting = queueData.filter(p => p.status === "waiting").length;
+    // res.render("opd.ejs", { patients: data });
 
-    res.render("opd", {
-       title: "OPD Queue Management",
-       totalPatients,
-       avgWaitTime,
-       waiting,
-       completed,
-       doctorsData: doctors,
-       queue: queueData
-    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch queue" });
+    console.error("Error fetching patients:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
+
+router.get('/opd/new', ensureAuthenticated, (req, res) => {
+
+  res.render('newPatient.ejs', {title:"OPD Management"});
+
+});
+
+
+router.post('/opd', ensureAuthenticated, async (req, res) => {
+  let {name, phone, department, appointmentTime, status, priority, waitTime, position} = req.body;
+  // Generate a unique id using timestamp
+  let uniqueId = `T${Date.now()}`;
+  let queue = new Queue({
+    id: uniqueId,
+    name,
+    phone,
+    department,
+    appointmentTime,
+    status,
+    priority,
+    waitTime,
+    position
+  });
+  try {
+    await queue.save();
+    console.log("Patient added successfully");
+    res.redirect('/admin/opd');
+  } catch (err) {
+    console.error("Error adding patient:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Edit Patient
+router.get('/opd/:id/edit', ensureAuthenticated, async (req, res) => {
+  try {
+    const patient = await Queue.findOne({ id: req.params.id });
+    if (!patient) {
+      return res.status(404).send("Patient not found");
+    }
+
+    res.render('editPatient.ejs', { patient , title:"OPD Management"});
+
+  } catch (err) {
+    console.error("Error fetching patient:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Update Patient (PUT request)
+router.post('/opd/:id', ensureAuthenticated, async (req, res) => {
+  const { name, phone, department, appointmentTime, status, priority, waitTime, position } = req.body;
+  try {
+    await Queue.findOneAndUpdate(
+      { id: req.params.id },
+      { name, phone, department, appointmentTime, status, priority, waitTime, position },
+      { new: true }
+    );
+    res.redirect('/admin/opd');
+  } catch (err) {
+    console.error("Error updating patient:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete Patient
+router.post('/opd/:id/delete', ensureAuthenticated, async (req, res) => {
+  try {
+    await Queue.deleteOne({ id: req.params.id });
+    res.redirect('/admin/opd');
+  } catch (err) {
+    console.error("Error deleting patient:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 
 

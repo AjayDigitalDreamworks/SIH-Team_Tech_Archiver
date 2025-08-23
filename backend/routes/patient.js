@@ -61,7 +61,7 @@ router.get("/admission/list", ensureAuthenticated, async (req, res) => {
             .lean();
 
         res.render("patient/admissions-list", {
-            title: "My Admissions",
+            title: "My Records",
             user: req.user,
             admissions
         });
@@ -88,7 +88,7 @@ router.post("/admission/:id/delete", ensureAuthenticated, async (req, res) => {
         }
 
         res.json({ success: true, message: "Admission cancelled successfully" });
-        res.render("patient/admissions-list", {title: "Admission records"});
+        res.render("patient/admissions-list", {title: "Admit records"});
     } catch (err) {
         console.error("Error cancelling admission:", err.stack);
         res.status(500).json({ success: false, message: "Error cancelling admission" });
@@ -101,7 +101,7 @@ router.get("/admission", ensureAuthenticated, async (req, res) => {
     try {
         const doctors = await Doctor.find();
         res.render("patient/admission", {
-            title: "Admission of Patient",
+            title: "Admit Patient Records",
             user: req.user,
             doctor: doctors,
             msg: ""
@@ -157,6 +157,18 @@ router.post("/appointment/:id/reschedule", ensureAuthenticated, async (req, res)
         console.error(err);
         res.status(500).json({ success: false, message: "Error rescheduling appointment." });
     }
+});
+
+// Delete appointment
+router.post('/appoint/:id/delete', ensureAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Appointment.findByIdAndDelete(id);
+    res.redirect('/patient/bookappointments'); // redirect to your appointment list page
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error deleting appointment');
+  }
 });
 
 // ===== Patient Dashboard =====
@@ -221,7 +233,7 @@ router.post("/book-appointment", ensureAuthenticated, (req, res) => {
 
     newAppointment
         .save()
-        .then(() => res.redirect("/patient/dashboard"))
+        .then(() => res.redirect("/patient/bookappointments"))
         .catch((err) => {
             console.error(err);
             res.status(500).render("patient/dashboard", { msg: "Error booking the appointment. Please try again." });

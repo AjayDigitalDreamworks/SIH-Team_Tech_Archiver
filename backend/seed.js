@@ -3,7 +3,7 @@
 // const OPDQueue = require("./models/Opd"); // adjust path if needed
 
 // // MongoDB connection string
-const MONGO_URI = "mongodb+srv://autenic123:Autenic%402023@cluster0.ffahpwv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // change db name if needed
+// const MONGO_URI = "mongodb+srv://autenic123:Autenic%402023@cluster0.ffahpwv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // change db name if needed
 
 // // Sample data arrays
 // const departments = ["Cardiology", "Dermatology", "Neurology", "Pediatrics", "Orthopedics"];
@@ -574,3 +574,4 @@ const MONGO_URI = "mongodb+srv://autenic123:Autenic%402023@cluster0.ffahpwv.mong
 // }
 
 // seedPatients();
+

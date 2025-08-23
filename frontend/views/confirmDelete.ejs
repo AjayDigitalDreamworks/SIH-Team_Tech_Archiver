@@ -1,0 +1,51 @@
+<%- include('./partials/sidebar.ejs') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Bed Deletion</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+   
+    .card-box {
+      max-width: 600px;
+      margin: 5rem auto;
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .warning-icon {
+      font-size: 3rem;
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card-box shadow">
+      <div class="warning-icon mb-3">⚠️</div>
+      <h4 class="fw-bold">Confirm Bed Deletion</h4>
+      <p class="text-muted">Are you sure you want to permanently delete this bed record? This action cannot be undone.</p>
+
+      <div class="row justify-content-center text-start my-4">
+        <div class="col-6">
+          <p><strong>Bed ID:</strong> <%= bed.bedId %></p>
+          <p><strong>Department:</strong> <%= bed.ward %></p>
+        </div>
+        <div class="col-6">
+          <p><strong>Room Number:</strong> <%= bed.room %></p>
+        </div>
+      </div>
+
+
+      <form action="/admin/bed/<%= bed._id %>/delete" method="POST" class="d-flex justify-content-center gap-3">
+        <a href="/admin/bed/<%= bed._id %>/edit" class="btn btn-outline-success">Cancel</a>
+        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

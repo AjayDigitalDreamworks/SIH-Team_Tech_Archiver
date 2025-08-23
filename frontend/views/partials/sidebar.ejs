@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SmartHosp - Hospital Management System</title>
+    <title>Medicure - Hospital Management System</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -21,7 +21,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
-    <link href="/css/login-style.css" rel="stylesheet" />
+    <link href="https://sih-team-tech-archiver.onrender.com/css/login-style.css" rel="stylesheet" />
   </head>
   <body>
     <div class="d-flex">
@@ -29,7 +29,7 @@
       <nav class="sidebar bg-light">
         <div class="sidebar-header p-3">
           <h4 class="text-primary fw-bold">
-            <img src="/images/logo.jpg" width="100px" height="50px" alt="">
+            <img src="https://sih-team-tech-archiver.onrender.com/images/logo.jpg" width="100px" height="50px" alt="">
           </h4>
         </div>
 
@@ -85,7 +85,7 @@
           </li>
         </ul>
 
-        <div class="mt-auto p-3">
+        <!-- <div class="mt-auto p-3">
           <div class="dropdown">
             <a
               class="btn btn-outline-secondary dropdown-toggle w-100"
@@ -103,13 +103,13 @@
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <a class="dropdown-item" href="/api/auth/logout"
+                <a class="dropdown-item" href="/admin/logout"
                   ><i class="bi bi-box-arrow-right"></i> Logout</a
                 >
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
       </nav>
 
       <!-- Main Content -->
@@ -121,10 +121,15 @@
             <h5 class="mb-0"><%- title%></h5>
           </div>
           <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light"><i class="bi bi-bell"></i></button>
-            <button class="btn btn-light"><i class="bi bi-gear"></i></button>
-            <div class="user-avatar">
+            <!-- <button class="btn btn-light"><i class="bi bi-bell"></i></button>
+            <button class="btn btn-light"><i class="bi bi-gear"></i></button> -->
+            <div class="user-avatar text-center">
               <i class="bi bi-person-circle fs-4 text-muted"></i>
+               <!-- <li> -->
+                <a class="dropdown-item" href="/api/auth/logout"
+                  ><i class="bi bi-box-arrow-right"></i> Logout</a
+                >
+              <!-- </li> -->
             </div>
           </div>
         </div>

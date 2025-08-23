@@ -1,0 +1,72 @@
+
+<%- include('./partials/sidebar.ejs') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Bed</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h2 class="mb-4 fw-bold">Add New Bed</h2>
+  <form action="/admin/bed" method="POST" class="card p-4 shadow-sm">
+    <div class="row mb-3">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Bed ID</label>
+        <input name="bedId" type="text" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Ward</label>
+        <input name="ward" type="text" class="form-control" required>
+      </div>
+      <div class="col-md-2 mb-3">
+        <label class="form-label">Floor</label>
+        <input name="floor" type="text" class="form-control" required>
+      </div>
+      <div class="col-md-2 mb-3">
+        <label class="form-label">Room</label>
+        <input name="room" type="text" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select" required>
+          <option value="available">Available</option>
+          <option value="occupied">Occupied</option>
+        </select>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Patient Name</label>
+        <input name="patientName" type="text" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Patient ID</label>
+        <input name="patientId" type="text" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Doctor</label>
+        <input name="doctor" type="text" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Condition</label>
+        <input name="condition" type="text" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Admit Date</label>
+        <input name="admitDate" type="date" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Discharge Date</label>
+        <input name="dischargeDate" type="date" class="form-control">
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <a href="/admin/bed" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-success">Add Bed</button>
+    </div>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

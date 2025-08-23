@@ -1,186 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartHosp - Revolutionizing Hospital Management</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediCure - Revolutionizing Hospital Management</title>
+
+  <!-- Fonts and Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    .card i {
+      transition: transform 0.3s ease;
+    }
+    .card:hover i {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
+
 <body>
-    <!-- Header Navigation -->
-    <header class="header">
-        <nav class="nav-container">
-            <div class="logo">
-                <!-- <i class="fas fa-heartbeat"></i>
-                <span>SmartHosp</span> -->
-                <img src="/images/logo.jpg" width="100px" height="50px" alt="logo medicure">
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link active">Home</a></li>
-                <li><a href="javascript:[0]" class="nav-link">About</a></li>
-                <li><a href="javascript:[0]" class="nav-link">Contact</a></li>
-            </ul>
-            <div class="nav-actions">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search for services or information...">
-                </div>
-                <a href="/api/auth/login"><button class="btn-login">Login</button></a>
-                <a href="/api/auth/login"><button class="btn-signup">Sign Up</button></a>
-            </div>
-        </nav>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-container">
-            <h1 class="hero-title">SmartHosp: Revolutionizing Hospital Management</h1>
-            <p class="hero-description">
-                A comprehensive web platform designed to streamline hospital operations, 
-                enhance patient care, and empower medical professionals with real-time data 
-                and efficient workflows.
-            </p>
-            <div class="hero-buttons">
-                <a href="/api/auth/login"><button class="btn-primary">Patient Login</button></a>
-                <a href="/api/auth/login"><button class="btn-secondary">Doctor/Admin Login</button></a>
-            </div>
-        </div>
-    </section>
+  <!-- Header Navigation -->
+  <header class="header">
+    <nav class="nav-container">
+      <div class="logo">
+        <img src="/images/logo.jpg" width="100" height="50" alt="MediCure Logo" />
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/" class="nav-link active">Home</a></li>
+        <li><a href="/admin/dashboard" class="nav-link">Admin Dashboard</a></li>
+        <li><a href="/patient/dashboard" class="nav-link">Patient Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="/api/auth/login"><button class="btn-login">Login</button></a>
+        <a href="/api/auth/login"><button class="btn-signup">Sign Up</button></a>
+      </div>
+    </nav>
+  </header>
 
-    <!-- Key Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Key Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <h3>Efficient OPD Queue Management</h3>
-                    <p>Streamline patient flow with smart queue systems, reducing wait times and optimizing patient and doctor availability systems, reducing wait times and improving patient satisfaction.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bed"></i>
-                    </div>
-                    <h3>Real-time Bed Availability</h3>
-                    <p>Instantly track bed occupancy across all departments, ICU, general wards, and private rooms, ensuring optimal resource allocation and quicker patient placement.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-file-medical"></i>
-                    </div>
-                    <h3>Comprehensive Patient Records</h3>
-                    <p>Secure patient information, upload medical history, lab results, and prescription security, facilitating seamless admissions and treatment planning.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h3>Streamlined Appointment Booking</h3>
-                    <p>Allow patients to easily book, reschedule, or cancel appointments with their preferred doctors and departments, anytime, anywhere.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-ambulance"></i>
-                    </div>
-                    <h3>Swift Emergency Admissions</h3>
-                    <p>Prioritize urgent cases with dedicated emergency protocols, ensuring immediate attention and efficient bed assignment for critical patients.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-boxes"></i>
-                    </div>
-                    <h3>Smart Inventory Management</h3>
-                    <p>Automate tracking of medical supplies, medicine stocks, and gym full visibility over your supply chain to prevent shortages and optimize costs.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <h1 class="hero-title">MediCure: Revolutionizing Hospital Management</h1>
+      <p class="hero-description">
+        A comprehensive web platform designed to streamline hospital operations, 
+        enhance patient care, and empower medical professionals with real-time data 
+        and efficient workflows.
+      </p>
+      <div class="hero-buttons">
+        <a href="/patient/dashboard"><button class="btn-primary">Patient Login</button></a>
+        <a href="/admin/dashboard"><button class="btn-secondary">Doctor/Admin Login</button></a>
+      </div>
+    </div>
+  </section>
 
-    <!-- Role-based Sections -->
-    <section class="roles">
-        <div class="container">
-            <h2 class="section-title">SmartHosp for Every Role</h2>
-            <div class="roles-grid">
-                <div class="role-card">
-                    <div class="role-avatar">
-                        <!-- <i class="fas fa-user"></i> -->
-                         <img src="/images/pat.png" alt="">
-                    </div>
-                    <h3>For Patients</h3>
-                    <p>Effortlessly manage your healthcare by booking appointments, check queue status, and manage your health records efficiently.</p>
-                    <a href="/api/auth/login"><button class="role-btn">Patient Login</button></a>
-                </div>
-                
-                <div class="role-card">
-                    <div class="role-avatar doctor">
-                        <!-- <i class="fas fa-user-md"></i> -->
-                          <img src="/images/doc.png" alt="">
-                    </div>
-                    <h3>For Doctors</h3>
-                    <p>Manage appointments, access patient records, and optimize your schedule with intuitive tools.</p>
-                    <a href="/api/auth/login"><button class="role-btn">Doctor Login</button></a>
-                </div>
-                
-                <div class="role-card">
-                    <div class="role-avatar admin">
-                        <!-- <i class="fas fa-user-tie"></i> -->
-                          <img src="/images/add.png" alt="">
-                    </div>
-                    <h3>For Administrators</h3>
-                    <p>Oversee hospital resources, monitor overall hospital operations from a centralized dashboard.</p>
-                    <a href="/api/auth/login"><button class="role-btn">Admin Login</button></a>
-                </div>
-            </div>
+  <!-- Key Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-clipboard-list"></i></div>
+          <h3>Efficient OPD Queue Management</h3>
+          <p>Streamline patient flow with smart queue systems, reducing wait times and improving patient satisfaction.</p>
         </div>
-    </section>
 
-    <!-- Call to Action Section -->
-    <section class="cta">
-        <div class="cta-container">
-            <h2>Experience Healthcare Management Reimagined</h2>
-            <p>SmartHosp is more than just software; it's a commitment to efficiency, clarity, and exceptional patient care. Join us in transforming hospital operations for a healthier tomorrow.</p>
-            <button class="btn-cta">Get Started Today</button>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bed"></i></div>
+          <h3>Real-time Bed Availability</h3>
+          <p>Instantly track bed occupancy across all departments, ICU, general wards, and private rooms.</p>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h4>Product</h4>
-            </div>
-            <div class="footer-section">
-                <h4>Resources</h4>
-            </div>
-            <div class="footer-section">
-                <h4>Company</h4>
-            </div>
-            <div class="footer-social">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-file-medical"></i></div>
+          <h3>Comprehensive Patient Records</h3>
+          <p>Secure patient information, upload medical history, lab results, and prescriptions with ease.</p>
         </div>
-        <div class="footer-bottom">
-            <div class="footer-logo">
-                <!-- <i class="fas fa-heartbeat"></i> -->
-                 <img src="/images/logo.jpg" width="100px" height="50px" alt="logo meidcure">
-                <!-- <span>SmartHosp</span> -->
-            </div>
-            <div class="footer-badge">
-                <span>Verified</span>
-            </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+          <h3>Streamlined Appointment Booking</h3>
+          <p>Allow patients to easily book, reschedule, or cancel appointments anytime, anywhere.</p>
         </div>
-    </footer>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-ambulance"></i></div>
+          <h3>Swift Emergency Admissions</h3>
+          <p>Prioritize urgent cases with dedicated emergency protocols for faster treatment.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-boxes"></i></div>
+          <h3>Smart Inventory Management</h3>
+          <p>Automate tracking of medical supplies and medicines to prevent shortages and optimize costs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose MediCure -->
+  <section class="py-5" style="background-color: #e6f6ee;">
+    <div class="container text-center">
+      <h2 class="fw-bold mb-3 text-dark">Why Choose <span style="color: var(--primary-color);">MediCure</span>?</h2>
+      <p class="text-muted mb-5 fs-5">Empowering modern healthcare with intelligent digital solutions</p>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <div style="color: var(--primary-color);" class=" mb-3"><i class="bi bi-clock-history fs-1"></i></div>
+            <h5 class="fw-semibold">Reduced Wait Times</h5>
+            <p class="text-muted small">Optimize patient flow and cut wait times by up to <strong>40%</strong>.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <div style="color: var(--primary-color);" class=" mb-3"><i class="bi bi-lightning-charge fs-1"></i></div>
+            <h5 class="fw-semibold">Improved Efficiency</h5>
+            <p class="text-muted small">Automate daily tasks to boost staff productivity and workflow.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <div style="color: var(--primary-color);" class=" mb-3"><i class="bi bi-shield-check fs-1"></i></div>
+            <h5 class="fw-semibold">Better Patient Care</h5>
+            <p class="text-muted small">Deliver a smoother, personalized patient experience.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 p-4">
+            <div  style="color: var(--primary-color);"  class="mb-3"><i class="bi bi-graph-up-arrow fs-1"></i></div>
+            <h5 class="fw-semibold">Data-Driven Insights</h5>
+            <p class="text-muted small">Use real-time data to make smarter clinical and admin decisions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Role-based Sections -->
+  <section class="roles">
+    <div class="container">
+      <h2 class="section-title">MediCure for Every Role</h2>
+      <div class="roles-grid">
+        <div class="role-card">
+          <div class="role-avatar"><img src="/images/pat.png" alt="Patient" /></div>
+          <h3>For Patients</h3>
+          <p>Book appointments, check queue status, and manage health records efficiently.</p>
+          <a href="/patient/dashboard"><button class="role-btn">Patient Login</button></a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-avatar doctor"><img src="/images/doc.png" alt="Doctor" /></div>
+          <h3>For Doctors</h3>
+          <p>Manage appointments, access patient records, and optimize your schedule.</p>
+          <a href="/admin/dashboard"><button class="role-btn">Doctor Login</button></a>
+        </div>
+
+        <div class="role-card">
+          <div class="role-avatar admin"><img src="/images/add.png" alt="Administrator" /></div>
+          <h3>For Administrators</h3>
+          <p>Monitor hospital resources and operations from a centralized dashboard.</p>
+          <a href="/admin/dashboard"><button class="role-btn">Admin Login</button></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta">
+    <div class="cta-container">
+      <h2>Experience Healthcare Management Reimagined</h2>
+      <p>MediCure is more than just software; it's a commitment to efficiency, clarity, and exceptional patient care.</p>
+      <button class="btn-cta">Get Started Today</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background-color: #1E2A38; color: white; padding: 40px 20px; font-family: sans-serif;">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; max-width: 1200px; margin: auto;">
+      <div>
+        <h3>Product</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="#" style="color: white; text-decoration: none;">Features</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Pricing</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Integrations</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Resources</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="#" style="color: white; text-decoration: none;">Blog</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Help Center</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">API Docs</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Company</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li><a href="#" style="color: white; text-decoration: none;">About Us</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Careers</a></li>
+          <li><a href="#" style="color: white; text-decoration: none;">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Follow Us</h3>
+        <div style="display: flex; gap: 10px;">
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="24" alt="Facebook" /></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" width="24" alt="Twitter" /></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733561.png" width="24" alt="LinkedIn" /></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="24" alt="Instagram" /></a>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; font-size: 14px; color: #ccc;">
+      © 2025 MediCure. All rights reserved.
+    </div>
+  </footer>
+
 </body>
 </html>
