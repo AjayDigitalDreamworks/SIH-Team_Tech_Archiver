@@ -39,10 +39,7 @@ mongoose
   .catch((err) => console.log(err));
 
 // Sample route
-<<<<<<< HEAD
 
-=======
->>>>>>> fb4be76e367c618b90b6afd694c1b1a960594550
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
@@ -50,11 +47,11 @@ app.use((req, res, next) => {
 
 
 app.get("/", (req, res) => {
-<<<<<<< HEAD
+
   res.render("index", { isAuthenticated: req.isAuthenticated(), user: req.user , title: "Welcome to Admin Panel"});
-=======
+
   res.render("index", { isAuthenticated: req.isAuthenticated() , title: "Welcome to Admin Panel"});
->>>>>>> fb4be76e367c618b90b6afd694c1b1a960594550
+
 });
 
 
