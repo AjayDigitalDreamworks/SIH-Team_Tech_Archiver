@@ -50,8 +50,6 @@ app.get("/", (req, res) => {
 
   res.render("index", { isAuthenticated: req.isAuthenticated(), user: req.user , title: "Welcome to Admin Panel"});
 
-  res.render("index", { isAuthenticated: req.isAuthenticated() , title: "Welcome to Admin Panel"});
-
 });
 
 
@@ -64,8 +62,8 @@ app.use("/api/auth", authRoutes);
 
 
 
-// const methodOverride = require('method-override');
-// app.use(methodOverride('_method'));
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 
 // Port configuration
