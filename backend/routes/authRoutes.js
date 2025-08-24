@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 require('dotenv').config();
+const sendEmail = require('../util/sendEmail');
 const User = require("../models/User");
 const router = express.Router();
 
@@ -165,6 +166,98 @@ router.get("/logout", (req, res) => {
   });
 });
 
+
+// gorget
+
+
+router.get('/forgot', (req, res) => {
+  res.render('forgot.ejs', {msg:" "}); // make a simple EJS page with email input
+});
+
+
+
+// 
+
+router.get('/reset/:token', async (req, res) => {
+  const user = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() } // Not expired
+  });
+
+  if (!user) {
+    return res.render('forgot', { msg: "Password reset link is invalid or has expired." });
+  }
+
+  res.render('reset', { token: req.params.token , msg: " "});
+});
+
+
+// 
+
+router.post('/reset/:token', async (req, res) => {
+  const user = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return res.render('forgot', { msg: "Password reset token is invalid or expired." });
+  }
+
+  const { password, confirm } = req.body;
+  if (password !== confirm) {
+    return res.render('reset', { token: req.params.token, msg: "Passwords do not match." });
+  }
+
+  // Update password
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(password, salt);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  res.redirect('/api/auth/login'); // Or show success message
+});
+
+
+
+// 
+
+
+
+// const crypto = require('crypto');
+// const User = require('../models/User');
+// const sendEmail = require('../utils/sendEmail'); // create this file
+
+router.post('/forgot', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.render('forgot', { msg: "No account with that email found." });
+  }
+
+  // Generate token
+  const token = crypto.randomBytes(20).toString('hex');
+
+  // Save token and expiry to user
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  await user.save();
+
+  // Send reset email
+  const resetLink = `http://${req.headers.host}/api/auth/reset/${token}`;
+  const html = `
+    <p>Hello ${user.name},</p>
+    <p>You requested a password reset.</p>
+    <p><a href="${resetLink}">Click here to reset your password</a></p>
+    <p>This link expires in 1 hour.</p>
+  `;
+
+  await sendEmail(user.email, 'Password Reset Request', html);
+
+  res.render('forgot', { msg: "An email has been sent with further instructions." });
+});
 
 
 

@@ -225,11 +225,13 @@ router.post("/book-appointment", ensureAuthenticated, (req, res) => {
 
     const newAppointment = new Appointment({
         patient: req.user._id,
+        user: req.user._id,
         doctor,
         department,
         date,
         time
     });
+
 
     newAppointment
         .save()
@@ -237,6 +239,7 @@ router.post("/book-appointment", ensureAuthenticated, (req, res) => {
         .catch((err) => {
             console.error(err);
             res.status(500).render("patient/dashboard", { msg: "Error booking the appointment. Please try again." });
+            console.log(err);
         });
 });
 

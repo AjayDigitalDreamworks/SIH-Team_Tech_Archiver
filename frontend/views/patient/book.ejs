@@ -139,15 +139,21 @@
             </div>
 
             <div class="form-column">
-                <h3>Select Date</h3>
-                <p class="help-text">Choose a convenient date and time slot.</p>
-                <input type="date" required name="date" class="form-control">
-            </div>
-            <div class="form-column">
-                <h3>Select Time</h3>
-                <p class="help-text">Choose a convenient date and time slot.</p>
-                <input type="time" required name="time" class="form-control">
-            </div>
+    <h3>Select Date</h3>
+    <p class="help-text">Choose an available date.</p>
+    <select id="dateSelect" required name="date" class="form-select">
+        <option value="">Choose Date</option>
+    </select>
+</div>
+
+<div class="form-column">
+    <h3>Select Time</h3>
+    <p class="help-text">Available time slots for the selected date.</p>
+    <select id="timeSelect" required name="time" class="form-select">
+        <option value="">Choose Time Slot</option>
+    </select>
+</div>
+
         </div>
 
         <button id="confirmAppointment" class="confirm-btn">Confirm Appointment</button>
@@ -181,6 +187,9 @@
         }
     });
 </script>
+
+
+
 
 
                 <!-- My Appointments Section -->
@@ -252,6 +261,70 @@
             </div>
         </main>
     </div>
+
+    <script>
+const dateSelect = document.getElementById('dateSelect');
+const timeSelect = document.getElementById('timeSelect');
+
+doctorContainer.addEventListener('change', async function () {
+    const doctorName = this.value;
+
+    // Reset selects
+    dateSelect.innerHTML = `<option value="">Choose Date</option>`;
+    timeSelect.innerHTML = `<option value="">Choose Time Slot</option>`;
+
+    if (!doctorName) return;
+
+    // Get dates for selected doctor
+    try {
+        const response = await fetch(`/api/doctors/dates?doctorName=${doctorName}`);
+        const data = await response.json();
+
+        if (data.dates && data.dates.length > 0) {
+            data.dates.forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading dates:", error);
+    }
+});
+
+dateSelect.addEventListener('change', async function () {
+    const doctorName = doctorContainer.value;
+    const selectedDate = this.value;
+
+    timeSelect.innerHTML = `<option value="">Choose Time Slot</option>`;
+
+    if (!doctorName || !selectedDate) return;
+
+    // Get time slots for selected doctor and date
+    try {
+        const response = await fetch(`/api/doctors/timeslots?doctorName=${doctorName}&date=${selectedDate}`);
+        const data = await response.json();
+
+        if (data.timeSlots && data.timeSlots.length > 0) {
+            data.timeSlots.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                timeSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No available slots';
+            timeSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error("Error loading time slots:", error);
+    }
+});
+</script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->

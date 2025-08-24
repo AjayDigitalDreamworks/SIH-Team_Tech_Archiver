@@ -1,9 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
+const Doctor = require("./models/Doctors");
 const dotenv = require("dotenv");
 const path = require("path");
 const cors = require("cors");
+const router = express.Router();
 const session = require("express-session");
 dotenv.config();
 const app = express();
@@ -59,6 +61,11 @@ app.use('/admin', adminRouter);
 app.use('/patient', patientRouter);
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
+
+// doctors
+const doctorAPIRoutes = require('./routes/patientroute'); // adjust path if needed
+app.use(doctorAPIRoutes);
+
 
 
 

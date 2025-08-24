@@ -5,27 +5,32 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    qualifications:{
+    qualifications: {
         type: String,
         required: true
     },
-    department:{
+    department: {
         type: String,
         required: true
     },
-    availableSlots: 
-    [{ type: String,
-        default: "Available"
-     }],
-     status: { 
-        type: String, 
+
+    // Schedule: { "2025-08-25": ["10:00", "11:00", "14:00"] }
+    schedule: {
+        type: Map,
+        of: [String], // Map of date (YYYY-MM-DD) => array of time strings
+        default: {}
+    },
+
+    status: {
+        type: String,
         enum: ['Available', 'Busy', 'On Break'],
-        default: 'Available' // Default value if status is not provided
+        default: 'Available'
     },
-     createdAt: {
-    type: Date,
-    default: Date.now
-  }
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-module.exports = mongoose.model("Doctor", doctorSchema)
+module.exports = mongoose.model("Doctor", doctorSchema);

@@ -42,7 +42,9 @@
          <% if (!isAuthenticated) { %>
         <a href="/api/auth/login"><button class="btn-login">Login</button></a>
         <a href="/api/auth/login"><button class="btn-signup">Sign Up</button></a>
-        <% } %>
+        <% }else{ %>
+          <a href="/api/auth/logout"><button class="btn-login">Logout</button></a>
+       <% } %>
       </div>
     </nav>
   </header>

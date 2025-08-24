@@ -1,274 +1,331 @@
 <%- include('./partials/sidebar.ejs') %>
-    <link rel="stylesheet" href="/css/app.css">
-    <div class="content-area p-4">
+<link rel="stylesheet" href="/css/app.css">
+<div class="content-area p-4">
+  <style>
+    .appointment-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .appointment-row .form-control-sm {
+      width: 120px;
+    }
+  </style>
 
-        <!-- Main Content -->
+  <div class="dashboard-content">
+    <!-- Appointments Overview -->
+    <div class="appointments-overview">
+      <div class="overview-header">
+        <h2>Appointments Overview</h2>
+      </div>
 
-        <div class="dashboard-content">
-            <!-- Appointments Overview -->
-            <div class="appointments-overview">
-                <div class="overview-header">
-                    <h2>Appointments Overview</h2>
-                </div>
+      <div class="appointments-stats-grid">
+        <div class="appointment-stat-card">
+          <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+          <div class="stat-info">
+            <h3>Pending Appointments</h3>
+            <div class="stat-number"><%- pendingAppointments %></div>
+            <div class="stat-subtitle">Awaiting confirmation</div>
+          </div>
+        </div>
 
-                <!-- Statistics Cards -->
-                <div class="appointments-stats-grid">
-                    <div class="appointment-stat-card">
-                        <div class="stat-icon pending">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Pending Appointments</h3>
-                            <div class="stat-number"><%- pendingAppointments%></div>
-                            <div class="stat-subtitle">Awaiting confirmation</div>
-                        </div>
-                    </div>
+        <div class="appointment-stat-card">
+          <div class="stat-icon confirmed"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-info">
+            <h3>Confirmed Today</h3>
+            <div class="stat-number"><%- confirmAppointments %></div>
+            <div class="stat-subtitle">Ready for consultation</div>
+          </div>
+        </div>
 
-                    <div class="appointment-stat-card">
-                        <div class="stat-icon confirmed">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Confirmed Today</h3>
-                            <div class="stat-number"><%- confirmAppointments%></div>
-                            <div class="stat-subtitle">Ready for consultation</div>
-                        </div>
-                    </div>
+        <div class="appointment-stat-card">
+          <div class="stat-icon completed"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-info">
+            <h3>Completed Today</h3>
+            <div class="stat-number"><%- completedAppointments %></div>
+            <div class="stat-subtitle">Consultations finished</div>
+          </div>
+        </div>
 
-                    <div class="appointment-stat-card">
-                        <div class="stat-icon completed">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Completed Today</h3>
-                            <div class="stat-number"><%- completedAppointments%></div>
-                            <div class="stat-subtitle">Consultations finished</div>
-                        </div>
-                    </div>
+        <div class="appointment-stat-card">
+          <div class="stat-icon cancelled"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-info">
+            <h3>Cancelled Today</h3>
+            <div class="stat-number"><%- cancelAppointments %></div>
+            <div class="stat-subtitle">No-shows & cancellations</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                    <div class="appointment-stat-card">
-                        <div class="stat-icon cancelled">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Cancelled Today</h3>
-                            <div class="stat-number"><%- cancelAppointments%></div>
-                            <div class="stat-subtitle">No-shows & cancellations</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Filters and List -->
+    <div class="appointments-management-section">
+    <div class="appointments-container">
+  <!-- Filters -->
+  <div class="appointments-filters">
+    <div class="search-filter">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchAppointments" placeholder="Search by patient name or ID...">
+    </div>
+    <div class="filter-controls">
+      <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+
+      <select id="departmentFilter">
+        <option value="">All Departments</option>
+        <option value="general medicine">General Medicine</option>
+        <option value="cardiology">Cardiology</option>
+        <option value="orthopedics">Orthopedics</option>
+        <option value="pediatrics">Pediatrics</option>
+        <option value="dermatology">Dermatology</option>
+        <option value="emergency">Emergency</option>
+      </select>
+
+      <select id="dateFilter">
+        <option value="">All Dates</option>
+        <option value="today">Today</option>
+        <option value="tomorrow">Tomorrow</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+
+      <button id="applyFiltersBtn" class="btn btn-primary">Apply</button>
+      <button class="reset-filters-btn btn btn-secondary">Reset</button>
+    </div>
+  </div>
+
+  <!-- Appointments Table -->
+  <div class="appointments-list">
+    <div class="appointments-header">
+      <h3>All Appointments</h3>
+    </div>
+    <div class="appointments-table">
+      <div class="table-header d-flex">
+        <div class="header-cell flex-fill">Patient Details</div>
+        <div class="header-cell flex-fill">Appointment Info</div>
+        <div class="header-cell flex-fill">Doctor</div>
+        <div class="header-cell flex-fill">Status</div>
+        <div class="header-cell flex-fill">Notify Delay</div>
+        <div class="header-cell flex-fill">Actions</div>
+      </div>
+
+      <% if (appointments.length > 0) { %>
+        <% appointments.forEach(appointment => { %>
+          <div class="appointment-row d-flex align-items-center"
+               style="display: flex;"
+               data-patient="<%= (appointment.patient?.name || 'unknown').toLowerCase() %>"
+               data-status="<%= (appointment.status || '').toLowerCase() %>"
+               data-department="<%= (appointment.department || '').toLowerCase() %>"
+               data-date="<%= new Date(appointment.date).toISOString().split('T')[0] %>">
+
+            <div class="patient-details flex-fill">
+              <div class="patient-name"><%= appointment.patient?.name || 'unknown' %></div>
             </div>
 
-            <!-- Appointments Management Section -->
-            <div class="appointments-management-section">
-                <div class="appointments-container">
-                    <!-- Filters and Search -->
-                    <div class="appointments-filters">
-                        <div class="search-filter">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchAppointments" placeholder="Search by patient name or ID...">
-                        </div>
-                        <div class="filter-controls">
-                            <select id="statusFilter">
-                                <option value="">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                            <select id="departmentFilter">
-                                <option value="">All Departments</option>
-                                <option value="General Medicine">General Medicine</option>
-                                <option value="Cardiology">Cardiology</option>
-                                <option value="Orthopedics">Orthopedics</option>
-                                <option value="Pediatrics">Pediatrics</option>
-                                <option value="Dermatology">Dermatology</option>
-                                <option value="Emergency">Emergency</option>
-                            </select>
-                            <select id="dateFilter">
-                                <option value="">All Dates</option>
-                                <option value="today">Today</option>
-                                <option value="tomorrow">Tomorrow</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                            </select>
-                            <button class="reset-filters-btn">Reset</button>
-                        </div>
-                    </div>
-
-                    <!-- Appointments List -->
-                    <div class="appointments-list">
-                        <div class="appointments-header">
-                            <h3>All Appointments</h3>
-                            <div class="list-controls">
-                                <button class="bulk-confirm-btn" disabled>
-                                    <i class="fas fa-check"></i>
-                                    Bulk Confirm
-                                </button>
-                                <button class="bulk-reject-btn" disabled>
-                                    <i class="fas fa-times"></i>
-                                    Bulk Reject
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="appointments-table">
-                            <div class="table-header">
-                                <div class="header-cell">
-                                    <input type="checkbox" id="selectAll">
-                                </div>
-                                <div class="header-cell">Patient Details</div>
-                                <div class="header-cell">Appointment Info</div>
-                                <div class="header-cell">Doctor</div>
-                                <div class="header-cell">Status</div>
-                                <div class="header-cell">Actions</div>
-                            </div>
-                            <% if (appointments.length> 0) { %>
-                                <% appointments.forEach(appointment=> { %>
-                                    <div class="table-body" id="appointmentsTableBody">
-                                        <!-- Appointment rows will be populated by JavaScript -->
-                                        <div id="appointmentsTableBody">
-                                        <!-- Appointment Row Example - Pending -->
-                                        <div class="appointment-row">
-                                            <div class="checkbox-cell">
-                                                <input type="checkbox" class="appointment-checkbox"
-                                                    value=`<%- appointments._id %>`>
-                                            </div>
-                                            <div class="patient-details">
-                                                <div class="patient-name">
-                                                    <%- appointment.patient?.name || 'Unknown' %>
-                                                </div>
-                                                <!-- <div class="patient-id">P-001</div> -->
-                                                <!-- <div class="patient-contact">+1 555-1234</div> -->
-                                            </div>
-                                            <div class="appointment-info">
-                                                <div class="appointment-date">
-                                                    <%= appointment.date%>
-                                                </div>
-                                                <div class="appointment-time">
-                                                    <%= appointment.time%>
-                                                </div>
-                                                <!-- <div class="appointment-type">General Checkup</div> -->
-                                            </div>
-                                            <div class="doctor-info">
-                                                <div class="doctor-name">
-                                                    <%= appointment.doctor%>
-                                                </div>
-                                                <div class="doctor-department">
-                                                    <%= appointment.department%>
-                                                </div>
-                                            </div>
-                                            <div class="status-cell">
-                                                <!-- <span class="status-badge status-pending"></span> -->
-                                                <% if (appointment.status.toLowerCase()==='pending' ) { %>
-                                                    <span class="badge bg-warning text-dark">Pending</span>
-                                                    <% } else if (appointment.status.toLowerCase()==='confirmed' ) { %>
-                                                        <span class="badge bg-success">Confirmed</span>
-                                                        <% } else if (appointment.status.toLowerCase()==='rescheduled' ) { %>
-                                                        <span class="badge bg-warning">rescheduled</span>
-                                                        <% } else if (appointment.status.toLowerCase()==='completed' ) { %>
-                                                            <span class="badge bg-info text-dark">Completed</span>
-                                                            <% } else if (appointment.status.toLowerCase()==='cancelled' ) { %>
-                                                                <span class="badge bg-danger">Cancelled</span>
-                                                                <% } %>
-                                            </div>
-                                            <div class="appointment-actions">
-                                               <% if (appointment.status.toLowerCase() === 'pending' || appointment.status.toLowerCase() === 'rescheduled') { %>
- 
-                                                    <form action="/admin/appointments/<%= appointment._id %>/confirm"
-                                                        method="POST" class="d-inline">
-                                                        <!-- <button type="submit" class="btn btn-sm btn-success">Confirm</button> -->
-                                                        <button type="submit" class="action-btn confirm-btn">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                    </form>
-
-                                                    <form action="/admin/appointments/<%= appointment._id %>/reject"
-                                                        method="POST" class="d-inline">
-                                                        <!-- <button type="submit" class="btn btn-sm btn-danger">Reject</button> -->
-                                                        <button type="submit" class="action-btn reject-btn">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </form>
-
-                                                    <% } else if (appointment.status.toLowerCase()==='confirmed' ) { %>
-
-                                                        <form
-                                                            action="/admin/appointments/<%= appointment._id %>/complete"
-                                                            method="POST" class="d-inline">
-                                                            <button type="submit"
-                                                                class="btn btn-sm btn-primary">Complete</button>
-                                                        </form>
-                                                        <button class="action-btn view-btn"> <i class="fas fa-eye"></i>
-                                                        </button>
-
-
-                                                        <% } else { %>
-                                                            <em>No actions</em>
-                                                            <% } %>
-                                            </div>
-                                        </div>
-
-
-                                    </div>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <% } %>
-                        </div>
-                    </div>
-                </div>
+            <div class="appointment-info flex-fill">
+              <div class="appointment-date"><%= appointment.date %></div>
+              <div class="appointment-time"><%= appointment.time %></div>
             </div>
 
+            <div class="doctor-info flex-fill">
+              <div class="doctor-name"><%= appointment.doctor %></div>
+              <div class="doctor-department"><%= appointment.department %></div>
             </div>
-</div></div>
-            <!-- Quick Actions Sidebar -->
-            <div class="quick-actions-sidebar">
-                <div class="quick-stats">
-    <h3>Quick Stats</h3>
-    <div class="quick-stat-item">
-        <span class="stat-label">Today's Appointments</span>
-        <span class="stat-value"><%= todaysAppointments %></span>
+
+            <div class="status-cell flex-fill">
+              <% const status = appointment.status.toLowerCase(); %>
+              <% if (status === 'pending') { %>
+                <span class="badge bg-warning text-dark">Pending</span>
+              <% } else if (status === 'confirmed') { %>
+                <span class="badge bg-success">Confirmed</span>
+              <% } else if (status === 'delayed') { %>
+                <span class="badge bg-warning">Delayed</span>
+              <% } else if (status === 'rescheduled') { %>
+                <span class="badge bg-warning">Rescheduled</span>
+              <% } else if (status === 'completed') { %>
+                <span class="badge bg-info text-dark">Completed</span>
+              <% } else if (status === 'cancelled') { %>
+                <span class="badge bg-danger">Cancelled</span>
+              <% } %>
+            </div>
+
+            <div class="delay-cell flex-fill">
+              <% if (['pending', 'rescheduled', 'delayed'].includes(status)) { %>
+                <form action="/admin/appointment/<%= appointment._id %>/delay" method="POST" class="d-flex align-items-center gap-2">
+                  <input type="number" name="delayMinutes" placeholder="Delay in minutes" required class="form-control form-control-sm" />
+                  <button class="btn btn-warning btn-sm">Notify Delay</button>
+                </form>
+              <% } else { %>
+                <em>No actions</em>
+              <% } %>
+            </div>
+
+            <div class="appointment-actions flex-fill d-flex gap-2">
+              <% if (['pending', 'rescheduled'].includes(status)) { %>
+                <form action="/admin/appointments/<%= appointment._id %>/confirm" method="POST">
+                  <button type="submit" class="btn btn-sm btn-success">✔</button>
+                </form>
+                <form action="/admin/appointments/<%= appointment._id %>/reject" method="POST">
+                  <button type="submit" class="btn btn-sm btn-danger">✖</button>
+                </form>
+              <% } else if (['confirmed', 'delayed'].includes(status)) { %>
+                <form action="/admin/appointments/<%= appointment._id %>/complete" method="POST">
+                  <button type="submit" class="btn btn-sm btn-primary">Complete</button>
+                </form>
+                <form action="/admin/appointments/<%= appointment._id %>/reject" method="POST">
+                  <button type="submit" class="btn btn-sm btn-danger">✖</button>
+                </form>
+              <% } else { %>
+                <em>No actions</em>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-muted p-3">No appointments available.</p>
+      <% } %>
     </div>
-    <div class="quick-stat-item">
-        <span class="stat-label">This Week</span>
-        <span class="stat-value"><%= weekAppointments %></span>
-    </div>
-    <div class="quick-stat-item">
-        <span class="stat-label">This Month</span>
-        <span class="stat-value"><%= monthAppointments %></span>
-    </div>
+  </div>
 </div>
 
+    </div>
 
-                <div class="recent-activities">
-                    <h3>Recent Activities</h3>
-                    <div class="activity-list" id="recentActivities">
-                        <!-- Recent activities will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <div class="quick-actions">
-                    <h3>Quick Actions</h3>
-                    <button class="quick-action-btn export-btn">
-                        <i class="fas fa-download"></i>
-                        Export Appointments
-                    </button>
-                    <button class="quick-action-btn schedule-btn">
-                        <i class="fas fa-calendar-plus"></i>
-                        Schedule Follow-up
-                    </button>
-                    <button class="quick-action-btn reminder-btn">
-                        <i class="fas fa-bell"></i>
-                        Send Reminders
-                    </button>
-                </div>
-            </div>
+    <!-- Quick Sidebar -->
+    <div class="quick-actions-sidebar">
+      <div class="quick-stats">
+        <h3>Quick Stats</h3>
+        <div class="quick-stat-item">
+          <span class="stat-label">Today's Appointments</span>
+          <span class="stat-value"><%= todaysAppointments %></span>
         </div>
+        <div class="quick-stat-item">
+          <span class="stat-label">This Week</span>
+          <span class="stat-value"><%= weekAppointments %></span>
+        </div>
+        <div class="quick-stat-item">
+          <span class="stat-label">This Month</span>
+          <span class="stat-value"><%= monthAppointments %></span>
+        </div>
+      </div>
+
+      <div class="recent-activities">
+        <h3>Recent Activities</h3>
+        <div class="activity-list" id="recentActivities">
+          <!-- Dynamic with JS -->
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <button class="quick-action-btn export-btn"><i class="fas fa-download"></i> Export Appointments</button>
+        <button class="quick-action-btn schedule-btn"><i class="fas fa-calendar-plus"></i> Schedule Follow-up</button>
+        <button class="quick-action-btn reminder-btn"><i class="fas fa-bell"></i> Send Reminders</button>
+      </div>
     </div>
-    </div>
+  </div>
+</div>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const applyBtn = document.getElementById("applyFiltersBtn");
+  const resetBtn = document.querySelector(".reset-filters-btn");
+  const rows = document.querySelectorAll(".appointment-row");
 
+  // Store original display style to properly show/hide rows
+  rows.forEach(row => {
+    row.dataset.originalDisplay = window.getComputedStyle(row).display || "flex";
+  });
 
+  function applyFilters() {
+    const searchTerm = document.getElementById("searchAppointments").value.toLowerCase().trim();
+    const selectedStatus = document.getElementById("statusFilter").value.toLowerCase();
+    const selectedDept = document.getElementById("departmentFilter").value.toLowerCase();
+    const selectedDateFilter = document.getElementById("dateFilter").value;
 
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    <%- include('./partials/footer.ejs') %>
+    rows.forEach(row => {
+      const patient = row.dataset.patient || "";
+      const status = row.dataset.status || "";
+      const dept = row.dataset.department || "";
+      const dateStr = row.dataset.date || "";
+
+      // 1. Check search term match
+      const searchMatch = !searchTerm || patient.includes(searchTerm);
+
+      // 2. Check status match
+      const statusMatch = !selectedStatus || status === selectedStatus;
+
+      // 3. Check department match
+      const deptMatch = !selectedDept || dept === selectedDept;
+
+      // 4. Check date match
+      let dateMatch = true; // Assume it matches unless a filter is active
+      if (selectedDateFilter) {
+        if (!dateStr) {
+          dateMatch = false; // No date, so it can't match
+        } else {
+          dateMatch = false; // Now must prove it matches
+          const [y, m, d] = dateStr.split("-").map(Number);
+          const apptDate = new Date(y, m - 1, d);
+
+          switch (selectedDateFilter) {
+            case "today":
+              if (apptDate.getTime() === today.getTime()) {
+                dateMatch = true;
+              }
+              break;
+            case "tomorrow":
+              const tomorrow = new Date(today);
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              if (apptDate.getTime() === tomorrow.getTime()) {
+                dateMatch = true;
+              }
+              break;
+            case "week":
+              // Defines "This Week" as today plus the next 6 days
+              const weekEnd = new Date(today);
+              weekEnd.setDate(weekEnd.getDate() + 6);
+              if (apptDate >= today && apptDate <= weekEnd) {
+                dateMatch = true;
+              }
+              break;
+            case "month":
+              if (
+                apptDate.getMonth() === today.getMonth() &&
+                apptDate.getFullYear() === today.getFullYear()
+              ) {
+                dateMatch = true;
+              }
+              break;
+          }
+        }
+      }
+
+      // Show the row ONLY if all filters match
+      if (searchMatch && statusMatch && deptMatch && dateMatch) {
+        row.style.display = row.dataset.originalDisplay;
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+
+  applyBtn.addEventListener("click", applyFilters);
+
+  resetBtn.addEventListener("click", () => {
+    document.getElementById("searchAppointments").value = "";
+    document.getElementById("statusFilter").value = "";
+    document.getElementById("departmentFilter").value = "";
+    document.getElementById("dateFilter").value = "";
+    applyFilters(); // Re-run the filter function to show all rows
+  });
+});
+</script>
+
+<%- include('./partials/footer.ejs') %>

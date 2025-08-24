@@ -5,6 +5,7 @@ const { ensureAuthenticated , checkRoles } = require("../config/auth");
 const Bed = require("../models/Bed");
 const Inventory = require("../models/Inventory");
 const Doctor = require("../models/Doctors");
+const sendEmail = require('../util/sendEmail');
 const Notification = require("../models/Notification");
 const moment = require("moment");
 const Patient = require("../models/Patient");
@@ -114,7 +115,9 @@ const opd = opds.length;
 // =========== appointment ==========
 router.get("/appointments", ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   try {
-    const appointments = await Appointment.find();
+    // const appointments = await Appointment.find();
+    const appointments = await Appointment.find().populate("patient");
+
     const confirmAppointments = appointments.filter(
       (a) => a.status.toLowerCase() === "confirmed"
     ).length;
@@ -153,6 +156,7 @@ router.get("/appointments", ensureAuthenticated, checkRoles(['admin', 'doctor'])
     res.render("appointment", {
       title: "Appointments Management",
       appointments,
+      user: req.user,
       confirmAppointments,
       pendingAppointments,
       completedAppointments,
@@ -166,6 +170,45 @@ router.get("/appointments", ensureAuthenticated, checkRoles(['admin', 'doctor'])
     res.status(500).render("error", { msg: "Error fetching appointments." });
   }
 });
+
+
+// ============ delay ========
+
+router.post('/appointment/:id/delay', async (req, res) => {
+  const { id } = req.params;
+  const { delayMinutes } = req.body;
+
+  try {
+    const appointment = await Appointment.findById(id).populate('user'); // assuming user = patient
+    if (!appointment) return res.status(404).send('Appointment not found');
+
+    // Update status or time
+    appointment.status = 'delayed';
+    await appointment.save();
+
+    // Send patient email
+    const patientEmail = appointment.user.email;
+    const html = `
+      <p>Dear ${appointment.user.name},</p>
+      <p>Your appointment with <strong>Dr. ${appointment.doctor}</strong> on <strong>${new Date(appointment.date).toLocaleDateString()}</strong> at <strong>${appointment.time}</strong> has been delayed by <strong>${delayMinutes} minutes</strong>.</p>
+      <p>We apologize for the inconvenience.</p>
+    `;
+
+    await sendEmail(patientEmail, 'Appointment Delay Notification', html);
+
+    // (Optional) Send admin email
+    const adminEmail = 'admin@yourclinic.com';
+    await sendEmail(adminEmail, 'Patient Appointment Delayed', `
+      <p>Appointment for ${appointment.user.name} delayed by ${delayMinutes} minutes.</p>
+    `);
+
+    res.send('Delay notification sent');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error notifying delay');
+  }
+});
+
 
 // ====== Confirm Appointment ======
 router.post(
@@ -303,7 +346,7 @@ router.post("/inventory/delete/:id", ensureAuthenticated, async (req, res) => {
 router.get('/bed', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
     try {
         const beds = await Bed.find();
-        res.render('bed-managemnt', { beds, title:"Bed Management" });
+        res.render('bed-managemnt', { beds, title:"Bed Management", user: req.user, });
     } catch (err) {
         console.error("Error fetching beds:", err);
         res.status(500).send("Internal Server Error");
@@ -311,7 +354,7 @@ router.get('/bed', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (
 });
 
 router.get('/bed/new', ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
-  res.render('newBed.ejs', {title:"Bed Management"});
+  res.render('newBed.ejs', {title:"Bed Management", user: req.user,});
 });
 
 router.post('/bed', ensureAuthenticated, async (req, res) => {
@@ -361,7 +404,7 @@ router.get('/bed/:id/edit', ensureAuthenticated, checkRoles(['admin', 'doctor'])
   try {
     const bed = await Bed.findById(req.params.id);
     if (!bed) return res.status(404).send("Bed not found");
-    res.render('editBed.ejs', { bed, title:"Bed Management" });
+    res.render('editBed.ejs', { bed, title:"Bed Management", user: req.user, });
   } catch (err) {
     console.error("Error fetching bed:", err);
     res.status(500).send("Internal Server Error");
@@ -426,7 +469,7 @@ router.post('/bed/:id/delete', ensureAuthenticated, async (req, res) => {
 router.get('/bed/:id/delete', ensureAuthenticated, checkRoles(['admin', 'doctor']), async (req, res) => {
   const bed = await Bed.findById(req.params.id);
   if (!bed) return res.status(404).send('Bed not found');
-  res.render('confirmDelete', { bed, title: "Confirm Delete" });
+  res.render('confirmDelete', { bed, title: "Confirm Delete", user: req.user, });
 });
 
 
@@ -440,7 +483,7 @@ router.get('/opd',ensureAuthenticated, checkRoles(['admin', 'doctor']), async (r
     let data = await Queue.find();
     console.log(data);
 
-    res.render("opd.ejs", { patients: data , title:"OPD Management"});
+    res.render("opd.ejs", { patients: data , title:"OPD Management", user: req.user,});
 
     // res.render("opd.ejs", { patients: data });
 
@@ -452,7 +495,7 @@ router.get('/opd',ensureAuthenticated, checkRoles(['admin', 'doctor']), async (r
 
 router.get('/opd/new', ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
 
-  res.render('newPatient.ejs', {title:"OPD Management"});
+  res.render('newPatient.ejs', {title:"OPD Management", user: req.user,});
 
 });
 
@@ -490,7 +533,7 @@ router.get('/opd/:id/edit', ensureAuthenticated, checkRoles(['admin', 'doctor'])
       return res.status(404).send("Patient not found");
     }
 
-    res.render('editPatient.ejs', { patient , title:"OPD Management"});
+    res.render('editPatient.ejs', { patient , title:"OPD Management", user: req.user,});
 
   } catch (err) {
     console.error("Error fetching patient:", err);
@@ -531,7 +574,7 @@ router.post('/opd/:id/delete', ensureAuthenticated, async (req, res) => {
 // =========== dashboard ======
 // =========Emergency route ========
 router.get("/emergency", ensureAuthenticated, checkRoles(['admin', 'doctor']), (req, res) => {
-  res.render("emergency", { title: "Emergency Admissions" });
+  res.render("emergency", { title: "Emergency Admissions" , user: req.user,});
 });
 
 module.exports = router;

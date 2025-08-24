@@ -121,14 +121,21 @@
             <h5 class="mb-0"><%- title%></h5>
           </div>
           <div class="d-flex align-items-center gap-3">
-            <!-- <button class="btn btn-light"><i class="bi bi-bell"></i></button>
-            <button class="btn btn-light"><i class="bi bi-gear"></i></button> -->
+             <% 
+              // appointments.forEach(appointment => { 
+                %>
+            <button class="btn btn-light"><%= user.name || 'unknown'%></button>
+            <% 
+            // }) 
+            %>
+            <!-- <button class="btn btn-light"><i class="bi bi-gear"></i></button> -->
             <div class="user-avatar text-center">
               <i class="bi bi-person-circle fs-4 text-muted"></i>
                <!-- <li> -->
                 <a class="dropdown-item" href="/api/auth/logout"
                   ><i class="bi bi-box-arrow-right"></i> Logout</a
                 >
+                
               <!-- </li> -->
             </div>
           </div>
