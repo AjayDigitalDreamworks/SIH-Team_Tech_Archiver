@@ -1,439 +1,268 @@
 <%- include('./partials/sidebar.ejs') %>
-    <link rel="stylesheet" href="/css/dash-style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="/css/dash-style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <div class="content-area p-4">
+<div class="content-area p-4">
 
-        <div class="dashboard-content">
-            <!-- Top Statistics Cards -->
-            <div class="admin-stats-grid">
-                <div class="admin-stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Beds</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
-                    </div>
-                    <div class="stat-number">
-                        <%= dashboardStats.totalBeds %>
-                    </div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+5 Beds</span>
+    <div class="dashboard-content">
+        <!-- Top Statistics Cards -->
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Beds</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-bed"></i>
                     </div>
                 </div>
-
-                <div class="admin-stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Occupied Beds</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-user-injured"></i>
-                        </div>
-                    </div>
-                    <div class="stat-number">
-                        <%= dashboardStats.occupiedBeds %>
-                    </div>
-                    <div class="stat-change negative">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>-1 today</span>
-                    </div>
+                <div class="stat-number">
+                    <%= dashboardStats.totalBeds %>
                 </div>
-
-                <div class="admin-stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Available Beds</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                    <div class="stat-number">
-                        <%= dashboardStats.availableBeds %>
-                    </div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+2 today</span>
-                    </div>
-                </div>
-
-                <div class="admin-stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Current OPD Queue</div>
-                        <div class="stat-icon">
-                            <i class="fas fa-list"></i>
-                        </div>
-                    </div>
-                    <div class="stat-number"> <%= dashboardStats.opd %></div>
-                    <div class="stat-change neutral">
-                        <i class="fas fa-clock"></i>
-                        <span>+3 in last hour</span>
-                    </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+5 Beds</span>
                 </div>
             </div>
 
-            <!-- Charts and Data Section -->
-            <div class="charts-section">
-                <!-- Bed Occupancy Trends -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h3>Bed Occupancy Trends</h3>
-                        <p>Daily patient occupancy vs. available beds.</p>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="bedOccupancyChart"></canvas>
+            <div class="admin-stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Occupied Beds</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-injured"></i>
                     </div>
                 </div>
-
-                <!-- OPD Queue Breakdown -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h3>OPD Queue Breakdown</h3>
-                        <p>Patients by department.</p>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="opdPieChart"></canvas>
-                    </div>
+                <div class="stat-number">
+                    <%= dashboardStats.occupiedBeds %>
+                </div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>-1 today</span>
                 </div>
             </div>
 
-            <!-- Tables Section -->
-            <div class="tables-section">
-                <!-- Recent Discharges -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>Recent Discharges</h3>
-                        <p>Latest patients discharged from the hospital.</p>
-                    </div>
-                    <div class="admin-table">
-                        <div class="table-header-row">
-                            <div class="table-cell">Patient ID</div>
-                            <div class="table-cell">Name</div>
-                            <div class="table-cell">Ward</div>
-                            <div class="table-cell">Discharge Date</div>
-                        </div>
-                        <div class="table-body" id="dischargesTable">
-  <% recentDischarges.forEach(bed => { %>
-    <div class="table-row">
-      <div class="table-cell patient-id"><%= bed.patient.id || 'N/A' %></div>
-      <div class="table-cell patient-name"><%= bed.patient.name || 'N/A' %></div>
-      <div class="table-cell department"><%= bed.ward || 'N/A' %></div>
-      <div class="table-cell date"><%= bed.dischargeDate ? bed.dischargeDate.toISOString().slice(0,10) : 'N/A' %></div>
-    </div>
-  <% }) %>
-</div>
-
+            <div class="admin-stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Available Beds</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
-
-                <!-- Inventory Low Stock Alerts -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3>Inventory Low Stock Alerts</h3>
-                        <p>Items nearing reorder thresholds.</p>
-                    </div>
-                    <div class="admin-table">
-                        <div class="table-header-row">
-                            <div class="table-cell">Item</div>
-                            <div class="table-cell">Current Stock</div>
-                            <div class="table-cell">Category</div>
-                            <div class="table-cell">Status</div>
-                        </div>
-                        <div class="table-body" id="inventoryTable">
-                            <% filteredInventory = inventoryData.filter(item=>
-                                item.status === 'Out of Stock' || item.status === 'Low Stock'
-                                ).slice(0, 10);
-                                %>
-
-                                <% filteredInventory.forEach(item=> { %>
-                                    <div class="table-row">
-                                        <div class="table-cell item-name">
-                                            <%= item.name %>
-                                        </div>
-                                        <div class="table-cell stock-count">
-                                            <%= item.stock %>
-                                                <%= item.unit %>
-                                        </div>
-                                        <div class="table-cell threshold">
-                                            <%= item.category %>
-                                        </div>
-                                        <div class="table-cell">
-                                            <span class="status-critical">
-                                                <%= item.status %>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <% }) %>
-                        </div>
-
-                    </div>
+                <div class="stat-number">
+                    <%= dashboardStats.availableBeds %>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+2 today</span>
                 </div>
             </div>
 
-            <!-- Doctor Availability Section -->
-            <div class="doctor-availability-section">
-                <div class="section-header">
-                    <h3>Doctor Availability</h3>
+            <div class="admin-stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Current OPD Queue</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
                 </div>
-                <div class="doctors-grid" id="doctorsGrid">
-                    <!-- Doctor cards will be populated by JavaScript -->
-                    <% doctorsData.forEach(doc=> { %>
-
-                        <div class="doctor-card">
-                            <div class="doctor-info">
-                                <div class="doctor-details">
-                                    <h4>
-                                        <%= doc.name %>
-                                    </h4>
-                                    <p>
-                                        <%= doc.qualifications %> — <%= doc.department %>
-                                    </p>
-                                </div>
-                                <% if (doc.status.toLowerCase()==="available" ) {%>
-                                    <span class="doctor-status-badge btn btn-success ">Available</span>
-
-                                    <% }else if(doc.status.toLowerCase()==="busy" ) { %>
-                                        <span class="doctor-status-badge btn btn-warning ">Busy</span>
-                                        <% }else if(doc.status.toLowerCase()==="on break" ) { %>
-
-                                            <span class="doctor-status-badge btn btn-danger ">On Break</span>
-                                            <% } %>
-                            </div>
-                        </div>
-                        <% }) %>
+                <div class="stat-number"> <%= dashboardStats.opd %></div>
+                <div class="stat-change neutral">
+                    <i class="fas fa-clock"></i>
+                    <span>+3 in last hour</span>
                 </div>
             </div>
         </div>
+
+        <!-- Charts and Data Section -->
+        <div class="charts-section">
+            <!-- Bed Occupancy Trends -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>Bed Occupancy Trends</h3>
+                    <p>Daily patient occupancy vs. available beds.</p>
+                </div>
+                <div class="chart-content">
+                    <canvas id="bedOccupancyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- OPD Queue Breakdown -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>OPD Queue Breakdown</h3>
+                    <p>Patients by department.</p>
+                </div>
+                <div class="chart-content">
+                    <canvas id="opdPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Section -->
+        <div class="tables-section">
+            <!-- Recent Discharges -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Recent Discharges</h3>
+                    <p>Latest patients discharged from the hospital.</p>
+                </div>
+                <div class="admin-table">
+                    <div class="table-header-row">
+                        <div class="table-cell">Patient ID</div>
+                        <div class="table-cell">Name</div>
+                        <div class="table-cell">Ward</div>
+                        <div class="table-cell">Discharge Date</div>
+                    </div>
+                    <div class="table-body" id="dischargesTable">
+                        <% recentDischarges.forEach(bed => { %>
+                            <div class="table-row">
+                                <div class="table-cell patient-id"><%= bed.patient.id || 'N/A' %></div>
+                                <div class="table-cell patient-name"><%= bed.patient.name || 'N/A' %></div>
+                                <div class="table-cell department"><%= bed.ward || 'N/A' %></div>
+                                <div class="table-cell date"><%= bed.dischargeDate ? bed.dischargeDate.toISOString().slice(0,10) : 'N/A' %></div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Low Stock Alerts -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Inventory Low Stock Alerts</h3>
+                    <p>Items nearing reorder thresholds.</p>
+                </div>
+                <div class="admin-table">
+                    <div class="table-header-row">
+                        <div class="table-cell">Item</div>
+                        <div class="table-cell">Current Stock</div>
+                        <div class="table-cell">Category</div>
+                        <div class="table-cell">Status</div>
+                    </div>
+                    <div class="table-body" id="inventoryTable">
+                        <% filteredInventory = inventoryData.filter(item=>
+                            item.status === 'Out of Stock' || item.status === 'Low Stock'
+                            ).slice(0, 10);
+                        %>
+                        <% filteredInventory.forEach(item=> { %>
+                            <div class="table-row">
+                                <div class="table-cell item-name">
+                                    <%= item.name %>
+                                </div>
+                                <div class="table-cell stock-count">
+                                    <%= item.stock %>
+                                        <%= item.unit %>
+                                </div>
+                                <div class="table-cell threshold">
+                                    <%= item.category %>
+                                </div>
+                                <div class="table-cell">
+                                    <span class="status-critical">
+                                        <%= item.status %>
+                                    </span>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Availability Section -->
+        <div class="doctor-availability-section">
+            <div class="section-header">
+                <h3>Doctor Availability</h3>
+            </div>
+            <div class="doctors-grid" id="doctorsGrid">
+                <% doctorsData.forEach(doc=> { %>
+                    <div class="doctor-card">
+                        <div class="doctor-info">
+                            <div class="doctor-details">
+                                <img class="img-fluid" width="70px"  src="https://img.pikbest.com/png-images/20241019/creative-doctor-logo-vector-design_10974091.png!sw800" alt="">
+                                <h4><%= doc.name %></h4>
+                                <p><%= doc.qualifications %> — <%= doc.department %></p>
+                            </div>
+                            <% if (doc.status.toLowerCase() === "available") { %>
+                                <span class="doctor-status-badge btn btn-success ">Available</span>
+                            <% } else if (doc.status.toLowerCase() === "busy") { %>
+                                <span class="doctor-status-badge btn btn-warning ">Busy</span>
+                            <% } else if (doc.status.toLowerCase() === "on break") { %>
+                                <span class="doctor-status-badge btn btn-danger ">On Break</span>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
     </div>
+</div>
 
+<script>
+    // Parse server-passed data safely
+    const bedOccupancyData = <%- JSON.stringify(bedOccupancyData) %>;
+    const opdBreakdownLabels = <%- JSON.stringify(opdBreakdownLabels) %>;
+    const opdBreakdownData = <%- JSON.stringify(opdBreakdownData) %>;
 
-    <!-- <script>
-        function initializeOPDBreakdownChart(labels, data) {
-            const ctx = document.getElementById('opdBreakdownChart').getContext('2d');
+    // Bar Chart Setup
+    const ctxBar = document.getElementById('bedOccupancyChart').getContext('2d');
 
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: [
-                        '#10b981',  // Green
-                        '#3b82f6',  // Blue
-                        '#f59e0b',  // Orange
-                        '#64748b',  // Gray
-                        '#ef4444',  // Red (extra colors if needed)
-                        '#8b5cf6'
-                    ],
-                    borderWidth: 0
-                }]
-            };
+    const labelsBar = bedOccupancyData.map(d => {
+        const date = new Date(d.date);
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    });
 
-            const config = {
-                type: 'doughnut',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 15,
-                                font: {
-                                    size: 11,
-                                    family: 'Inter'
-                                },
-                                color: '#64748b'
-                            }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            };
+    const dataBar = {
+        labels: labelsBar,
+        datasets: [
+            {
+                label: 'Occupied Beds',
+                data: bedOccupancyData.map(d => d.occupied),
+                backgroundColor: '#10b981' // green
+            },
+            {
+                label: 'Available Beds',
+                data: bedOccupancyData.map(d => d.available),
+                backgroundColor: '#f59e0b' // amber
+            }
+        ]
+    };
 
-            new Chart(ctx, config);
+    const configBar = {
+        type: 'bar',
+        data: dataBar,
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
         }
+    };
 
-        // On page load, pass EJS data from backend
-        document.addEventListener('DOMContentLoaded', () => {
-            const labels = <% - JSON.stringify(opdBreakdownLabels) %>;
-            const data = <% - JSON.stringify(opdBreakdownData) %>;
-            initializeOPDBreakdownChart(labels, data);
-        });
-    </script>
+    new Chart(ctxBar, configBar);
 
+    // Pie Chart Setup
+    const ctxPie = document.getElementById('opdPieChart').getContext('2d');
 
-    <script>
-        // Convert backend bedOccupancyData array to chart labels and datasets
-        const bedOccupancyDataFromBackend = <% - JSON.stringify(bedOccupancyData) %>;
+    const dataPie = {
+        labels: opdBreakdownLabels,
+        datasets: [{
+            data: opdBreakdownData,
+            backgroundColor: ['#F87171', '#60A5FA', '#34D399', '#FBBF24'], // red, blue, green, yellow
+            borderWidth: 1
+        }]
+    };
 
-        const labels = bedOccupancyDataFromBackend.map(d => {
-            const dateObj = new Date(d.date + 'T00:00:00'); // safer parsing
-            return dateObj.toLocaleDateString('en-US', { weekday: 'short' }); // Mon, Tue, etc.
-        });
-
-
-
-
-        const occupiedData = bedOccupancyDataFromBackend.map(d => d.occupied);
-        const availableData = bedOccupancyDataFromBackend.map(d => d.available);
-
-        const ctx = document.getElementById('bedOccupancyChart').getContext('2d');
-
-        const data = {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Occupied',
-                    data: occupiedData,
-                    backgroundColor: '#10b981',
-                    borderColor: '#10b981',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Available',
-                    data: availableData,
-                    backgroundColor: '#f59e0b',
-                    borderColor: '#f59e0b',
-                    borderWidth: 1
-                }
-            ]
-        };
-
-        const config = {
-            type: 'bar',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 12,
-                                family: 'Inter'
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: <%= dashboardStats.totalBeds %>,
-                        ticks: {
-                            stepSize: Math.ceil(<%= dashboardStats.totalBeds %> / 4),
-                            font: {
-                                size: 11,
-                                family: 'Inter'
-                            },
-                            color: '#64748b'
-                        },
-                        grid: {
-                            color: '#f1f5f9'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                size: 11,
-                                family: 'Inter'
-                            },
-                            color: '#64748b'
-                        },
-                        grid: {
-                            display: false
-                        }
-                    }
+    const configPie = {
+        type: 'pie',
+        data: dataPie,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
             }
-        };
-
-        const bedOccupancyChart = new Chart(ctx, config);
-    </script> -->
-
-
-<script>
-  // Parse server-passed data safely
-  const bedOccupancyData = <%- JSON.stringify(bedOccupancyData) %>;
-  const opdBreakdownLabels = <%- JSON.stringify(opdBreakdownLabels) %>;
-  const opdBreakdownData = <%- JSON.stringify(opdBreakdownData) %>;
-
-  // Bar Chart Setup
-  const ctxBar = document.getElementById('bedOccupancyChart').getContext('2d');
-
-  const labelsBar = bedOccupancyData.map(d => {
-    const date = new Date(d.date);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  });
-
-  const dataBar = {
-    labels: labelsBar,
-    datasets: [
-      {
-        label: 'Occupied Beds',
-        data: bedOccupancyData.map(d => d.occupied),
-        backgroundColor: '#10b981' // green
-      },
-      {
-        label: 'Available Beds',
-        data: bedOccupancyData.map(d => d.available),
-        backgroundColor: '#f59e0b' // amber
-      }
-    ]
-  };
-
-  const configBar = {
-    type: 'bar',
-    data: dataBar,
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  };
-
-  new Chart(ctxBar, configBar);
-
-  // Pie Chart Setup
-  const ctxPie = document.getElementById('opdPieChart').getContext('2d');
-
-  const dataPie = {
-    labels: opdBreakdownLabels,
-    datasets: [{
-      data: opdBreakdownData,
-      backgroundColor: ['#F87171', '#60A5FA', '#34D399', '#FBBF24'], // red, blue, green, yellow
-      borderWidth: 1
-    }]
-  };
-
-  const configPie = {
-    type: 'pie',
-    data: dataPie,
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom'
         }
-      }
-    }
-  };
+    };
 
-  new Chart(ctxPie, configPie);
+    new Chart(ctxPie, configPie);
 </script>
 
-
-
-<script>
-  const bedOccupancyData = <%- JSON.stringify(bedOccupancyData) %>;
-  const opdBreakdownLabels = <%- JSON.stringify(opdBreakdownLabels) %>;
-  const opdBreakdownData = <%- JSON.stringify(opdBreakdownData) %>;
-
-  console.log('bedOccupancyData:', bedOccupancyData);
-  console.log('opdBreakdownLabels:', opdBreakdownLabels);
-  console.log('opdBreakdownData:', opdBreakdownData);
-</script>
-
-    <%- include('./partials/footer.ejs') %>
+<%- include('./partials/footer.ejs') %>

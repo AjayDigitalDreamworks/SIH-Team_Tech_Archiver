@@ -7,6 +7,7 @@ const path = require("path");
 const cors = require("cors");
 const router = express.Router();
 const session = require("express-session");
+const flash = require('connect-flash');
 dotenv.config();
 const app = express();
 
@@ -72,6 +73,7 @@ app.use(doctorAPIRoutes);
 const methodOverride = require('method-override');
 app.use(methodOverride('_method'));
 
+app.use(flash()); 
 
 // Port configuration
 const PORT = process.env.PORT || 5000;

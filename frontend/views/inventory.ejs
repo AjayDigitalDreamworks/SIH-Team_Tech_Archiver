@@ -136,29 +136,51 @@
     </div>
 
     <!-- Controls -->
-    <div class="table-controls mb-3">
-      <div class="search-box me-2" style="flex:1;">
-        <input id="searchInput" type="text" class="form-control" placeholder="Search items by name..." />
-      </div>
+   <!-- Controls -->
+<div class="table-controls mb-3">
+  <div class="search-box me-2" style="flex:1;">
+    <form method="GET" action="/admin/inventory">
+      <input 
+        id="searchInput" 
+        type="text" 
+        name="search" 
+        class="form-control" 
+        placeholder="Search items by name..." 
+        value="<%= searchTerm %>" />
+    </form>
+  </div>
 
-      <div class="d-flex gap-2">
-        <select id="statusFilter" class="form-select">
-          <option value="">All Statuses</option>
-          <option value="In Stock">In Stock</option>
-          <option value="Low Stock">Low Stock</option>
-          <option value="Out of Stock">Out of Stock</option>
-        </select>
+  <div class="d-flex gap-2">
+    <form method="GET" action="/admin/inventory">
+      <select 
+        id="statusFilter" 
+        class="form-select" 
+        name="status" 
+        onchange="this.form.submit()">
+        <option value="">All Statuses</option>
+        <option value="In Stock" <%= selectedStatus === 'In Stock' ? 'selected' : '' %>>In Stock</option>
+        <option value="Low Stock" <%= selectedStatus === 'Low Stock' ? 'selected' : '' %>>Low Stock</option>
+        <option value="Out of Stock" <%= selectedStatus === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
+      </select>
+    </form>
 
-        <select id="categoryFilter" class="form-select">
-          <option value="">All Categories</option>
-          <option>Medical Consumables</option>
-          <option>Medical Devices</option>
-          <option>Pharmaceuticals</option>
-        </select>
+    <form method="GET" action="/admin/inventory">
+      <select 
+        id="categoryFilter" 
+        class="form-select" 
+        name="category" 
+        onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        <option value="Medical Consumables" <%= selectedCategory === 'Medical Consumables' ? 'selected' : '' %>>Medical Consumables</option>
+        <option value="Medical Devices" <%= selectedCategory === 'Medical Devices' ? 'selected' : '' %>>Medical Devices</option>
+        <option value="Pharmaceuticals" <%= selectedCategory === 'Pharmaceuticals' ? 'selected' : '' %>>Pharmaceuticals</option>
+      </select>
+    </form>
 
-        <button id="refreshBtn" class="btn btn-outline-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
-      </div>
-    </div>
+    <button id="refreshBtn" class="btn btn-outline-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
+  </div>
+</div>
+
 
     <!-- Inventory Table -->
     <div class="table-responsive">
@@ -210,17 +232,39 @@
     </div>
 
     <!-- Pagination placeholder (you can replace with server-side pagination) -->
-    <div class="pagination-container mt-3 d-flex justify-content-end">
-      <nav aria-label="Inventory pagination">
-        <ul class="pagination mb-0">
-          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-      </nav>
-    </div>
+    <!-- Pagination -->
+<div class="pagination-container mt-3 d-flex justify-content-end">
+  <nav aria-label="Inventory pagination">
+    <ul class="pagination mb-0">
+      <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= searchTerm %>&status=<%= selectedStatus %>&category=<%= selectedCategory %>">Previous</a>
+        </li>
+      <% } else { %>
+        <li class="page-item disabled">
+          <a class="page-link" href="#">Previous</a>
+        </li>
+      <% } %>
+
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>&search=<%= searchTerm %>&status=<%= selectedStatus %>&category=<%= selectedCategory %>"><%= i %></a>
+        </li>
+      <% } %>
+
+      <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= searchTerm %>&status=<%= selectedStatus %>&category=<%= selectedCategory %>">Next</a>
+        </li>
+      <% } else { %>
+        <li class="page-item disabled">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>
+
 
   </div>
 
@@ -278,100 +322,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  function openEditModal(itemId) {
-    const row = [...document.querySelectorAll('#inventoryTableBody tr')]
-      .find(r => r.querySelector('td')?.innerText.trim() === itemId);
+  // Refresh the page with default filters cleared
+document.getElementById('refreshBtn').addEventListener('click', function () {
+  window.location.href = "/admin/inventory"; // Refreshes with default filters
+});
 
-    if (!row) return;
-
-    // Extract values
-    const name = row.cells[1].innerText.trim();
-    const category = row.cells[2].innerText.trim();
-    const stock = row.cells[3].innerText.trim();
-    const unit = row.cells[4].innerText.trim();
-    const status = row.cells[5].innerText.trim();
-
-    // Populate modal fields
-    document.getElementById('editItemId').value = itemId;
-    document.getElementById('editName').value = name;
-    document.getElementById('editCategory').value = category;
-    document.getElementById('editStock').value = stock;
-    document.getElementById('editUnit').value = unit;
-    document.getElementById('editStatus').value = status;
-
-    // ✅ Fix: use backticks for dynamic route
-    document.getElementById('editForm').action = /admin/inventory/edit/${itemId};
-
-    // Show modal
-    new bootstrap.Modal(document.getElementById('editModal')).show();
-  }
-
-  // Search & Filter
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const categoryFilter = document.getElementById('categoryFilter');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const tableBody = document.getElementById('inventoryTableBody');
-
-    function filterTable() {
-      const searchTerm = searchInput.value.toLowerCase().trim();
-      const statusValue = statusFilter.value;
-      const categoryValue = categoryFilter.value;
-
-      let visibleCount = 0;
-
-      tableBody.querySelectorAll('tr').forEach(row => {
-        if (row.classList.contains('no-results')) return;
-
-        if (row.cells.length < 8) return;
-
-        const name = row.cells[1].textContent.toLowerCase();
-        const category = row.cells[2].textContent;
-        const status = row.cells[5].textContent;
-
-        const matchesSearch = searchTerm === '' || name.includes(searchTerm);
-        const matchesStatus = statusValue === '' || status === statusValue;
-        const matchesCategory = categoryValue === '' || category === categoryValue;
-
-        if (matchesSearch && matchesStatus && matchesCategory) {
-          row.style.display = '';
-          visibleCount++;
-        } else {
-          row.style.display = 'none';
-        }
-      });
-
-      // ✅ Fix: wrap HTML in backticks
-      let noResultsRow = tableBody.querySelector('tr.no-results');
-      if (visibleCount === 0) {
-        if (!noResultsRow) {
-          noResultsRow = document.createElement('tr');
-          noResultsRow.className = 'no-results';
-          noResultsRow.innerHTML = `<td colspan="8" class="text-center text-muted">
-            No items found matching your criteria
-          </td>`;
-          tableBody.appendChild(noResultsRow);
-        }
-      } else if (noResultsRow) {
-        noResultsRow.remove();
-      }
-    }
-
-    searchInput.addEventListener('input', filterTable);
-    statusFilter.addEventListener('change', filterTable);
-    categoryFilter.addEventListener('change', filterTable);
-
-    refreshBtn.addEventListener('click', function() {
-      searchInput.value = '';
-      statusFilter.value = '';
-      categoryFilter.value = '';
-      filterTable();
-    });
-
-    filterTable(); // Run once on load
-  });
-</script>
+  </script>
 
 <%- include('./partials/footer.ejs') %>
 </body>

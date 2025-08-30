@@ -1,123 +1,157 @@
 <%- include('./partials/sidebar.ejs') %>
- <link rel="stylesheet" href="/css/emerc.css">
- <div class="content-area p-4">
-            <!-- Content Grid -->
-            <div class="content-grid">
-                <!-- Emergency Admit Card -->
-                <div class="emergency-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <h3>EMERGENCY ADMIT</h3>
-                            <i class="fas fa-exclamation-triangle warning-icon"></i>
-                        </div>
-                        <div class="priority-badge">
-                            <span class="priority-label">Priority Level:</span>
-                            <span class="priority-value">High</span>
-                        </div>
-                    </div>
-                    
-                    <div class="emergency-toggle">
-                        <label class="toggle-switch">
-                            <input type="checkbox" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <span class="toggle-label">Emergency Mode Active</span>
-                    </div>
-
-                    <div class="emergency-actions">
-                        <button class="btn btn-primary">Activate Rapid Response</button>
-                        <button class="btn btn-secondary">Adjust Priority</button>
-                    </div>
+<link rel="stylesheet" href="/css/emerc.css">
+<div class="content-area p-4">
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Emergency Admit Card -->
+        <!-- <div class="emergency-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3>EMERGENCY ADMIT</h3>
+                    <i class="fas fa-exclamation-triangle warning-icon"></i>
                 </div>
-
-                <!-- Patient Registration Form -->
-                <div class="registration-card">
-                    <h3>Patient Quick Registration</h3>
-                    <p class="form-description">Enter essential patient details for immediate admission.</p>
-                    
-                    <form class="registration-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Patient Name</label>
-                                <input type="text" value="John Doe" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>Age</label>
-                                <input type="number" value="35" class="form-control">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Gender</label>
-                                <select class="form-control">
-                                    <option>Select Gender</option>
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Contact Number</label>
-                                <input type="tel" value="+1 (555) 123-4567" class="form-control">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Chief Complaint</label>
-                            <textarea class="form-control" rows="3">Severe chest pain, difficulty breathing</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Vitals (BP, Temp, HR, SpO2)</label>
-                            <input type="text" value="BP: 140/90, Temp: 38.5C, HR: 110, SpO2: 88%" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Referring Doctor/Paramedic (Optional)</label>
-                            <input type="text" value="Dr. Jane Smith, City EMS" class="form-control">
-                        </div>
-
-                        <button type="submit" class="btn btn-success btn-full">Register Patient & Proceed</button>
-                    </form>
+                <div class="priority-badge">
+                    <span class="priority-label">Priority Level:</span>
+                    <span class="priority-value">High</span>
                 </div>
-
-                <!-- Bed Assignment Section -->
-                <div class="bed-assignment-card">
-                    <div class="card-header">
-                        <h3>Bed Assignment</h3>
-                        <i class="fas fa-bed"></i>
-                    </div>
-                    
-                    <div class="filter-section">
-                        <label>Filter by Room Type</label>
-                        <select class="form-control">
-                            <option>ER</option>
-                            <option>ICU</option>
-                            <option>General Ward</option>
-                        </select>
-                    </div>
-
-                    <div class="available-beds">
-                        <h4>Available Beds</h4>
-                        <div class="bed-grid">
-                            <div class="bed-item">
-                                <span class="bed-number">ER01</span>
-                            </div>
-                            <div class="bed-item occupied">
-                                <span class="bed-number">ER02</span>
-                                <span class="bed-status">BED OCCUPIED</span>
-                            </div>
-                            <div class="bed-item">
-                                <span class="bed-number">ER03</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary btn-full">Assign Selected Bed</button>
-                    </div>
-                </div>
-
-                <!-- Instant Notifications -->
             </div>
-        </main>
 
-    <%- include('./partials/footer.ejs') %>
+            <div class="emergency-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Emergency Mode Active</span>
+            </div>
+
+            <div class="emergency-actions">
+                <button class="btn btn-primary">Activate Rapid Response</button>
+                <button class="btn btn-secondary">Adjust Priority</button>
+            </div>
+        </div> -->
+
+        
+        <!-- Patient Registration Form -->
+        <div class="registration-card">
+            <h3>Patient Quick Registration</h3>
+            <p class="form-description">Enter essential patient details for immediate admission.</p>
+
+          <!-- Show flash message based on status -->
+            <% if (status === 'success') { %>
+                <div class="alert alert-success">
+                    Patient registered successfully!
+                </div>
+            <% } else if (status === 'error') { %>
+                <div class="alert alert-danger">
+                    There was an error registering the patient.
+                </div>
+            <% } %>
+
+
+            <!-- Update the form to submit data to the backend -->
+           <form class="registration-form" action="/admin/emergency" method="POST">
+  <div class="form-row">
+    <div class="form-group">
+      <label>Patient Name</label>
+      <input type="text" name="name" value="John Doe" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>Age</label>
+      <input type="number" name="age" value="35" class="form-control" required>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Gender</label>
+      <select name="gender" class="form-control" required>
+        <option>Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Contact Number</label>
+      <input type="tel" name="contactNumber" value="+1 (555) 123-4567" class="form-control" required>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Chief Complaint</label>
+    <textarea name="chiefComplaint" class="form-control" rows="3" required>Severe chest pain, difficulty breathing</textarea>
+  </div>
+
+  <!-- Update this to accept individual vitals data -->
+  <div class="form-group">
+    <label>Vitals</label>
+    <div class="form-row">
+      <div class="form-group">
+        <label>BP</label>
+        <input type="text" name="vitals[BP]" value="140/90" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Temperature</label>
+        <input type="text" name="vitals[temp]" value="38.5C" class="form-control" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Heart Rate</label>
+        <input type="number" name="vitals[heartRate]" value="110" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>SpO2</label>
+        <input type="text" name="vitals[SpO2]" value="88%" class="form-control" required>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Referring Doctor/Paramedic (Optional)</label>
+    <input type="text" name="referringDoctor" value="Dr. Jane Smith, City EMS" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-success btn-full">Register Patient & Proceed</button>
+</form>
+
+        </div>
+
+        <!-- Bed Assignment Section -->
+        <div class="bed-assignment-card">
+            <div class="card-header">
+                <h3>Bed Assignment</h3>
+                <i class="fas fa-bed"></i>
+            </div>
+
+            <div class="filter-section">
+                <label>Filter by Room Type</label>
+                <select class="form-control">
+                    <option>ER</option>
+                    <option>ICU</option>
+                    <option>General Ward</option>
+                </select>
+            </div>
+
+            <div class="available-beds">
+                <h4>Available Beds</h4>
+                <div class="bed-grid">
+                    <div class="bed-item">
+                        <span class="bed-number">ER01</span>
+                    </div>
+                    <div class="bed-item occupied">
+                        <span class="bed-number">ER02</span>
+                        <span class="bed-status">BED OCCUPIED</span>
+                    </div>
+                    <div class="bed-item">
+                        <span class="bed-number">ER03</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full">Assign Selected Bed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer.ejs') %>

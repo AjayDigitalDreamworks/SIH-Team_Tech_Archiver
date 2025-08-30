@@ -76,19 +76,44 @@
   </div>
 
   <!-- Search & Filters (UI Only) -->
-  <div class="card mb-4">
-    <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
-      <input type="text" class="form-control w-auto" placeholder="Search by Room or Patient Name...">
-      <select class="form-select w-auto">
-        <option>All Bed Types</option>
+  <!-- Search & Filters (UI Only) -->
+<div class="card mb-4">
+  <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
+    <!-- Search by Room or Patient Name -->
+    <form method="GET" action="/admin/bed" class="w-100 d-flex align-items-center gap-3">
+      <input type="text" class="form-control w-auto" name="search" placeholder="Search by Room..." value="<%= searchTerm %>">
+      
+      <!-- Bed Types Filter -->
+      <select class="form-select w-auto" name="bedType">
+        <option value="">All Bed Types</option>
+        <option value="available" <%= bedType === 'available' ? 'selected' : '' %>>Available</option>
+        <option value="occupied" <%= bedType === 'occupied' ? 'selected' : '' %>>Occupied</option>
+        <option value="maintenance" <%= bedType === 'maintenance' ? 'selected' : '' %>>Maintenance</option>
+        <option value="reserved" <%= bedType === 'reserved' ? 'selected' : '' %>>Reserved</option>
       </select>
-      <select class="form-select w-auto">
-        <option>All Departments</option>
+
+      <!-- Department Filter -->
+      <select class="form-select w-auto" name="department">
+        <option value="">All Departments</option>
+        <% departments.forEach(department => { %>
+          <option value="<%= department %>" <%= department === selectedDepartment ? 'selected' : '' %>><%= department %></option>
+        <% }) %>
       </select>
-      <button class="btn btn-outline-secondary">Reset Filters</button>
+
+      <!-- Apply Filters Button -->
+      <button type="submit" class="btn btn-outline-primary">Apply Filters</button>
+
+      <!-- Reset Filters Button -->
+      <a href="/admin/bed" class="btn btn-outline-secondary">Reset Filters</a>
+
+      <!-- Add New Bed Button -->
+        <div class="col-md-3 d-flex justify-content-end">
       <a href="/admin/bed/new" class="btn btn-primary">Add The Bed</a>
-    </div>
+      </div>
+    </form>
   </div>
+</div>
+
 
   <!-- Bed Cards -->
   <div class="row g-3">
